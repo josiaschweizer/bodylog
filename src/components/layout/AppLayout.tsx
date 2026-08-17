@@ -103,25 +103,25 @@ export default function AppLayout() {
       <button
         type="button"
         onClick={openNewEntry}
-        className="fixed bottom-20 right-5 z-30 flex items-center gap-2 rounded-full bg-chocolate-plum-800 px-5 py-3.5 font-semibold text-white shadow-xl shadow-chocolate-plum-950/25 transition active:scale-95 lg:hidden"
+        className="fixed bottom-[calc(6.25rem+env(safe-area-inset-bottom))] right-5 z-30 flex min-h-13 items-center gap-2 rounded-full bg-chocolate-plum-800 px-6 py-3.5 text-base font-semibold text-white shadow-xl shadow-chocolate-plum-950/25 transition active:scale-95 lg:hidden"
       >
         <Plus size={21} aria-hidden="true" />
         Neu
       </button>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid h-16 grid-cols-3 border-t border-dusty-taupe-200 bg-white lg:hidden" aria-label="Mobile Navigation">
+      <nav className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5.25rem+env(safe-area-inset-bottom))] grid-cols-3 border-t border-dusty-taupe-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(29,25,22,0.06)] lg:hidden" aria-label="Mobile Navigation">
         {navigation.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 text-xs font-semibold ${
+              `flex min-h-20 flex-col items-center justify-center gap-1.5 px-2 text-sm font-semibold ${
                 isActive ? 'text-chocolate-plum-800' : 'text-dusty-taupe-500'
               }`
             }
           >
-            <Icon size={21} aria-hidden="true" />
+            <Icon size={26} strokeWidth={2.15} aria-hidden="true" />
             {label}
           </NavLink>
         ))}
