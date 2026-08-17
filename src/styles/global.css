@@ -1,0 +1,73 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-khaki-beige-50: #f6f2ef;
+  --color-khaki-beige-100: #ede5de;
+  --color-khaki-beige-200: #dacabe;
+  --color-khaki-beige-300: #c8b09d;
+  --color-khaki-beige-400: #b6957c;
+  --color-khaki-beige-500: #a37b5c;
+  --color-khaki-beige-600: #836249;
+  --color-khaki-beige-700: #624a37;
+  --color-khaki-beige-800: #413125;
+  --color-khaki-beige-900: #211912;
+  --color-khaki-beige-950: #17110d;
+
+  --color-dusty-taupe-50: #f4f2f0;
+  --color-dusty-taupe-100: #e9e6e2;
+  --color-dusty-taupe-200: #d3ccc5;
+  --color-dusty-taupe-300: #bdb3a8;
+  --color-dusty-taupe-400: #a7998b;
+  --color-dusty-taupe-500: #91806e;
+  --color-dusty-taupe-600: #746658;
+  --color-dusty-taupe-700: #574d42;
+  --color-dusty-taupe-800: #3a332c;
+  --color-dusty-taupe-900: #1d1a16;
+  --color-dusty-taupe-950: #14120f;
+
+  --color-ash-brown-50: #f4f2f0;
+  --color-ash-brown-100: #e9e5e2;
+  --color-ash-brown-200: #d3cbc5;
+  --color-ash-brown-300: #bdb0a8;
+  --color-ash-brown-400: #a7968b;
+  --color-ash-brown-500: #917c6e;
+  --color-ash-brown-600: #746358;
+  --color-ash-brown-700: #574a42;
+  --color-ash-brown-800: #3a322c;
+  --color-ash-brown-900: #1d1916;
+  --color-ash-brown-950: #14110f;
+
+  --color-chocolate-plum-50: #f5f0f0;
+  --color-chocolate-plum-100: #ebe1e0;
+  --color-chocolate-plum-200: #d6c3c2;
+  --color-chocolate-plum-300: #c2a5a3;
+  --color-chocolate-plum-400: #ad8785;
+  --color-chocolate-plum-500: #996966;
+  --color-chocolate-plum-600: #7a5452;
+  --color-chocolate-plum-700: #5c3f3d;
+  --color-chocolate-plum-800: #3d2a29;
+  --color-chocolate-plum-900: #1f1514;
+  --color-chocolate-plum-950: #150f0e;
+}
+
+@layer base {
+  html {
+    font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+    color: var(--color-ash-brown-900);
+    background: var(--color-khaki-beige-50);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
