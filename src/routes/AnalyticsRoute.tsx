@@ -61,7 +61,7 @@ export default function AnalyticsRoute() {
   const averagePerActiveDay = activeDays ? (entries.length / activeDays).toFixed(1) : '0'
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-5 pb-28 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
+    <main className="mx-auto w-full max-w-7xl px-5 pb-36 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
       <header>
         <p className="text-sm font-semibold text-chocolate-plum-600">Letzte 30 Tage</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-chocolate-plum-950 sm:text-4xl">Analytics</h1>
@@ -74,19 +74,19 @@ export default function AnalyticsRoute() {
         <p className="mt-6 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">{error}</p>
       ) : null}
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4" aria-label="Analytics-Kennzahlen">
+      <section className="mt-7 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 xl:grid-cols-4" aria-label="Analytics-Kennzahlen">
         {[
           { label: 'Einträge', value: isLoading ? '–' : entries.length, icon: Activity },
           { label: 'Aktive Tage', value: isLoading ? '–' : activeDays, icon: CalendarRange },
           { label: 'Ø pro aktivem Tag', value: isLoading ? '–' : averagePerActiveDay, icon: Gauge },
           { label: 'Genutzte Kategorien', value: isLoading ? '–' : categoryData.length, icon: Layers3 },
         ].map(({ label, value, icon: Icon }) => (
-          <article key={label} className="rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm">
+          <article key={label} className="rounded-2xl border border-dusty-taupe-200 bg-white p-4 shadow-sm sm:p-5">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-dusty-taupe-600">{label}</p>
               <Icon className="text-chocolate-plum-500" size={20} aria-hidden="true" />
             </div>
-            <p className="mt-3 text-3xl font-bold text-chocolate-plum-950">{value}</p>
+            <p className="mt-2 text-2xl font-bold text-chocolate-plum-950 sm:mt-3 sm:text-3xl">{value}</p>
           </article>
         ))}
       </section>
@@ -95,7 +95,7 @@ export default function AnalyticsRoute() {
         <section className="rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm sm:p-6">
           <h2 className="text-lg font-bold text-chocolate-plum-950">Aktivität im Verlauf</h2>
           <p className="mt-1 text-sm text-dusty-taupe-600">Die letzten 14 Tage im direkten Vergleich</p>
-          <div className="mt-5 overflow-x-auto pb-2">
+          <div className="scrollbar-hidden -mx-5 mt-5 touch-pan-x overflow-x-auto px-5 pb-2 sm:-mx-6 sm:px-6">
             <div className="min-w-[42rem]"><ActivityBarChart data={dailyCounts} /></div>
           </div>
         </section>
@@ -150,7 +150,7 @@ export default function AnalyticsRoute() {
                 </div>
                 {getTrackingEntrySummary(entry) ? <p className="mt-1 pl-[1.375rem] text-sm text-dusty-taupe-600">{getTrackingEntrySummary(entry)}</p> : null}
               </div>
-              <button type="button" onClick={() => openEditEntry(entry)} className="grid size-9 shrink-0 place-items-center rounded-lg text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700" aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}>
+              <button type="button" onClick={() => openEditEntry(entry)} className="grid size-11 shrink-0 place-items-center rounded-xl text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}>
                 <Pencil size={16} aria-hidden="true" />
               </button>
             </article>

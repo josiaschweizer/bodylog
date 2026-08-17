@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import type { FormEvent } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { FormEvent, PointerEvent as ReactPointerEvent } from 'react'
 import { LoaderCircle, Plus, X } from 'lucide-react'
 import FoodEntryFields from '@/components/tracking/FoodEntryFields'
 import BodyMeasurementFields from '@/components/tracking/BodyMeasurementFields'
@@ -82,9 +82,18 @@ export default function NewEntryDialog({
   const [medications, setMedications] = useState<Medication[]>([])
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStartY = useRef(0)
+  const dragStartedAt = useRef(0)
+  const dialogRef = useRef<HTMLElement>(null)
+  const dismissTimer = useRef<number | null>(null)
 
   useEffect(() => {
     if (!isOpen) return
+    const previouslyFocusedElement = document.activeElement as HTMLElement | null
+    setDragOffset(0)
+    setIsDragging(false)
     setEntryType(entryToEdit?.entry_type ?? 'SYMPTOM')
     setOccurredAt(getLocalDateTimeValue(entryToEdit ? new Date(entryToEdit.occurred_at) : new Date()))
     setNote(entryToEdit?.note ?? '')
@@ -204,10 +213,27 @@ export default function NewEntryDialog({
       if (event.key === 'Escape') onClose()
     }
 
+    const scrollPosition = window.scrollY
+    const previousBodyStyles = {
+      overflow: document.body.style.overflow,
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+    }
     document.body.style.overflow = 'hidden'
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollPosition}px`
+    document.body.style.width = '100%'
+    requestAnimationFrame(() => dialogRef.current?.focus({ preventScroll: true }))
     window.addEventListener('keydown', handleKeyDown)
     return () => {
-      document.body.style.overflow = ''
+      if (dismissTimer.current !== null) window.clearTimeout(dismissTimer.current)
+      document.body.style.overflow = previousBodyStyles.overflow
+      document.body.style.position = previousBodyStyles.position
+      document.body.style.top = previousBodyStyles.top
+      document.body.style.width = previousBodyStyles.width
+      window.scrollTo(0, scrollPosition)
+      previouslyFocusedElement?.focus({ preventScroll: true })
       window.removeEventListener('keydown', handleKeyDown)
     }
   }, [isOpen, onClose, entryToEdit])
@@ -372,23 +398,75 @@ export default function NewEntryDialog({
     }
   }
 
+  function handleDragStart(event: ReactPointerEvent<HTMLDivElement>) {
+    if (window.innerWidth >= 640 || isSubmitting) return
+    dragStartY.current = event.clientY
+    dragStartedAt.current = performance.now()
+    setIsDragging(true)
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+
+  function handleDragMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!isDragging) return
+    setDragOffset(Math.max(0, event.clientY - dragStartY.current))
+  }
+
+  function handleDragEnd(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!isDragging) return
+    const finalOffset = Math.max(0, event.clientY - dragStartY.current)
+    const elapsed = Math.max(performance.now() - dragStartedAt.current, 1)
+    const velocity = finalOffset / elapsed
+    setIsDragging(false)
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+
+    if (finalOffset > 110 || (finalOffset > 36 && velocity > 0.65)) {
+      setDragOffset(window.innerHeight)
+      dismissTimer.current = window.setTimeout(onClose, 220)
+      return
+    }
+
+    setDragOffset(0)
+  }
+
   if (!isOpen) return null
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-ash-brown-950/45 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      className="fixed inset-0 z-50 flex items-end justify-center p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      style={{
+        backgroundColor: `rgba(20, 17, 15, ${0.45 * (1 - Math.min(dragOffset / 420, 1))})`,
+      }}
       role="presentation"
-      onMouseDown={(event) => {
-        if (event.currentTarget === event.target) onClose()
+      onPointerDown={(event) => {
+        if (event.currentTarget === event.target && !isSubmitting) onClose()
       }}
     >
       <section
-        className="max-h-[92svh] w-full overflow-y-auto rounded-t-3xl bg-khaki-beige-50 p-5 shadow-2xl sm:max-w-2xl sm:rounded-3xl sm:p-7"
+        className={`flex max-h-[calc(100dvh-env(safe-area-inset-top)-0.75rem)] w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-khaki-beige-50 shadow-2xl sm:max-h-[92svh] sm:max-w-2xl sm:rounded-3xl ${
+          isDragging ? '' : 'transition-transform duration-300 ease-out'
+        }`}
+        style={{ transform: `translate3d(0, ${dragOffset}px, 0)` }}
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
+        aria-busy={isSubmitting}
         aria-modal="true"
         aria-labelledby="new-entry-title"
       >
-        <div className="flex items-start justify-between gap-4">
+        <div
+          className="flex h-8 shrink-0 touch-none cursor-grab items-center justify-center active:cursor-grabbing sm:hidden"
+          onPointerDown={handleDragStart}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragEnd}
+          aria-hidden="true"
+        >
+          <span className="h-1.5 w-11 rounded-full bg-dusty-taupe-300" />
+        </div>
+
+        <div className="flex shrink-0 items-start justify-between gap-4 px-5 pb-4 sm:px-7 sm:pt-7">
           <div>
             <p className="text-sm font-semibold text-chocolate-plum-600">
               {entryToEdit ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}
@@ -400,17 +478,18 @@ export default function NewEntryDialog({
           <button
             type="button"
             onClick={onClose}
-            className="grid size-10 shrink-0 place-items-center rounded-full text-dusty-taupe-700 transition hover:bg-dusty-taupe-100"
+            className="grid size-11 shrink-0 place-items-center rounded-full text-dusty-taupe-700 transition hover:bg-dusty-taupe-100 active:bg-dusty-taupe-200"
             aria-label="Dialog schliessen"
           >
             <X size={22} aria-hidden="true" />
           </button>
         </div>
 
-        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
+        <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-5 pb-6 pt-2 sm:px-7 sm:pt-3">
           <fieldset>
             <legend className="text-sm font-semibold text-ash-brown-800">Kategorie</legend>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-2 gap-2 min-[375px]:grid-cols-3">
               {TRACKING_TYPES.map((type) => (
                 <button
                   key={type.value}
@@ -494,22 +573,26 @@ export default function NewEntryDialog({
             </p>
           ) : null}
 
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3.5 font-semibold text-white transition hover:bg-chocolate-plum-900 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {isSubmitting ? (
-              <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
-            ) : (
-              <Plus size={20} aria-hidden="true" />
-            )}
-            {isSubmitting
-              ? 'Wird gespeichert …'
-              : entryToEdit
-                ? 'Änderungen speichern'
-                : 'Eintrag speichern'}
-          </button>
+          </div>
+
+          <div className="shrink-0 border-t border-dusty-taupe-200 bg-khaki-beige-50/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:px-7 sm:pb-7 sm:pt-4">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex min-h-13 w-full items-center justify-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3.5 font-semibold text-white transition hover:bg-chocolate-plum-900 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting ? (
+                <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
+              ) : (
+                <Plus size={20} aria-hidden="true" />
+              )}
+              {isSubmitting
+                ? 'Wird gespeichert …'
+                : entryToEdit
+                  ? 'Änderungen speichern'
+                  : 'Eintrag speichern'}
+            </button>
+          </div>
         </form>
       </section>
     </div>

@@ -46,7 +46,7 @@ export default function DashboardRoute() {
   const greeting = new Date().getHours() < 12 ? 'Guten Morgen' : new Date().getHours() < 18 ? 'Guten Tag' : 'Guten Abend'
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-5 pb-28 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
+    <main className="mx-auto w-full max-w-7xl px-5 pb-36 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
       <header className="flex items-end justify-between gap-6">
         <div>
           <p className="text-sm font-semibold text-chocolate-plum-600">Heute im Überblick</p>
@@ -71,7 +71,7 @@ export default function DashboardRoute() {
         <p className="mt-6 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">{error}</p>
       ) : null}
 
-      <section className="mt-8 grid gap-4 sm:grid-cols-3" aria-label="Tageskennzahlen">
+      <section className="mt-7 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4" aria-label="Tageskennzahlen">
         {[
           { label: 'Einträge heute', value: isLoading ? '–' : todayEntries.length, icon: CalendarDays },
           { label: 'Kategorien', value: isLoading ? '–' : categoryCount, icon: Layers3 },
@@ -80,13 +80,13 @@ export default function DashboardRoute() {
             value: isLoading || !todayEntries[0] ? '–' : new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' }).format(new Date(todayEntries[0].occurred_at)),
             icon: Clock3,
           },
-        ].map(({ label, value, icon: Icon }) => (
-          <article key={label} className="rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm">
+        ].map(({ label, value, icon: Icon }, index) => (
+          <article key={label} className={`rounded-2xl border border-dusty-taupe-200 bg-white p-4 shadow-sm sm:p-5 ${index === 0 ? 'col-span-2 sm:col-span-1' : ''}`}>
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-dusty-taupe-600">{label}</p>
               <Icon className="text-chocolate-plum-500" size={20} aria-hidden="true" />
             </div>
-            <p className="mt-3 text-3xl font-bold text-chocolate-plum-950">{value}</p>
+            <p className="mt-2 text-2xl font-bold text-chocolate-plum-950 sm:mt-3 sm:text-3xl">{value}</p>
           </article>
         ))}
       </section>
@@ -139,7 +139,7 @@ export default function DashboardRoute() {
                         <time className="shrink-0 text-xs font-medium text-dusty-taupe-500">
                           {new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' }).format(new Date(entry.occurred_at))}
                         </time>
-                        <button type="button" onClick={() => openEditEntry(entry)} className="grid size-8 place-items-center rounded-lg text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700" aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}>
+                        <button type="button" onClick={() => openEditEntry(entry)} className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}>
                           <Pencil size={15} aria-hidden="true" />
                         </button>
                       </div>

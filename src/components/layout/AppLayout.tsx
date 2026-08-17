@@ -90,7 +90,7 @@ export default function AppLayout() {
       </aside>
 
       <div className="lg:col-start-2">
-        <header className="sticky top-0 z-20 flex h-16 items-center border-b border-dusty-taupe-200 bg-khaki-beige-50/90 px-5 backdrop-blur lg:hidden">
+        <header className="sticky top-0 z-20 flex h-[calc(4rem+env(safe-area-inset-top))] items-end border-b border-dusty-taupe-200 bg-khaki-beige-50/90 px-5 pb-5 pt-[env(safe-area-inset-top)] backdrop-blur lg:hidden">
           <div className="flex items-center gap-2 font-bold tracking-tight text-chocolate-plum-950">
             <Activity size={22} aria-hidden="true" />
             BodyLog
@@ -116,7 +116,7 @@ export default function AppLayout() {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `flex min-h-20 flex-col items-center justify-center gap-1.5 px-2 text-sm font-semibold ${
+              `mx-1 my-1 flex min-h-[4.75rem] flex-col items-center justify-center gap-1.5 rounded-2xl px-2 text-sm font-semibold transition active:scale-95 active:bg-dusty-taupe-100 ${
                 isActive ? 'text-chocolate-plum-800' : 'text-dusty-taupe-500'
               }`
             }

@@ -50,7 +50,7 @@ export default function AuthLayout({
         </div>
       </section>
 
-      <section className="flex items-center justify-center px-5 py-10 sm:px-10 lg:px-16">
+      <section className="flex items-center justify-center px-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[max(2.5rem,env(safe-area-inset-top))] sm:px-10 lg:px-16">
         <div className="w-full max-w-md">
           <Link
             to="/"

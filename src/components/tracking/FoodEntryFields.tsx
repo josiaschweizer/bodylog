@@ -50,7 +50,7 @@ export default function FoodEntryFields({
                 <button
                   type="button"
                   onClick={() => onItemsChange(items.filter((candidate) => candidate.id !== item.id))}
-                  className="grid size-8 place-items-center rounded-lg text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700"
+                  className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200"
                   aria-label={`Position ${index + 1} entfernen`}
                 >
                   <Trash2 size={17} aria-hidden="true" />

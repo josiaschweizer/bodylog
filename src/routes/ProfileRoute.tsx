@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { CircleUserRound, Clock3, LoaderCircle, Plus, Tablets, Trash2, X } from 'lucide-react'
+import { CircleUserRound, Clock3, LoaderCircle, LogOut, Plus, Tablets, Trash2, X } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/lib/auth-context'
+import getBrowserClient from '@/lib/supabase/getBrowserClient'
 import type { MedicationForm } from '@/lib/tracking'
 import { createMedication, deactivateMedication, getMedications } from '@/methods/profile'
 import type { MedicationWithSchedules } from '@/methods/profile'
@@ -20,11 +22,14 @@ const MEDICATION_FORMS: Array<{ value: MedicationForm; label: string }> = [
 
 export default function ProfileRoute() {
   const { user } = useAuth()
+  const navigate = useNavigate()
   const [medications, setMedications] = useState<MedicationWithSchedules[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSigningOut, setIsSigningOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [logoutError, setLogoutError] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [activeIngredient, setActiveIngredient] = useState('')
   const [strength, setStrength] = useState('')
@@ -85,10 +90,26 @@ export default function ProfileRoute() {
     }
   }
 
+  async function handleLogout() {
+    setIsSigningOut(true)
+    setLogoutError(null)
+
+    try {
+      const { error: signOutError } = await getBrowserClient().auth.signOut()
+
+      if (signOutError) throw signOutError
+
+      navigate('/login', { replace: true })
+    } catch {
+      setLogoutError('Du konntest nicht abgemeldet werden. Bitte versuche es erneut.')
+      setIsSigningOut(false)
+    }
+  }
+
   const fieldClass = 'w-full rounded-xl border border-dusty-taupe-300 bg-white px-3 py-3 text-sm outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100'
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pb-28 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
+    <main className="mx-auto w-full max-w-5xl px-5 pb-36 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
       <header>
         <p className="text-sm font-semibold text-chocolate-plum-600">Konto und Einstellungen</p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight text-chocolate-plum-950 sm:text-4xl">Profil</h1>
@@ -148,10 +169,25 @@ export default function ProfileRoute() {
                   <p key={schedule.id} className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-chocolate-plum-700"><Clock3 size={14} /> täglich um {schedule.scheduled_time?.slice(0, 5)}</p>
                 ))}
               </div>
-              <button type="button" onClick={() => handleDeactivate(medication.id)} className="grid size-9 place-items-center rounded-lg text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700" aria-label={`${medication.name} entfernen`}><Trash2 size={17} /></button>
+              <button type="button" onClick={() => handleDeactivate(medication.id)} className="grid size-11 shrink-0 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${medication.name} entfernen`}><Trash2 size={18} /></button>
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="text-lg font-bold text-chocolate-plum-950">Konto</h2>
+        <p className="mt-1 text-sm text-dusty-taupe-600">Beende deine aktuelle Sitzung auf diesem Gerät.</p>
+        {logoutError ? <p className="mt-4 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">{logoutError}</p> : null}
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={isSigningOut}
+          className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-chocolate-plum-200 bg-white px-5 py-3 font-semibold text-chocolate-plum-800 transition active:scale-[0.98] active:bg-chocolate-plum-50 disabled:cursor-wait disabled:opacity-60 sm:w-auto"
+        >
+          {isSigningOut ? <LoaderCircle className="animate-spin" size={20} aria-hidden="true" /> : <LogOut size={20} aria-hidden="true" />}
+          {isSigningOut ? 'Wird abgemeldet …' : 'Abmelden'}
+        </button>
       </section>
     </main>
   )
