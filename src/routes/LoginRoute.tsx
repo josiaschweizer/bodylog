@@ -24,12 +24,18 @@ export default function LoginRoute() {
     event.preventDefault()
 
     const nextErrors: LoginErrors = {}
-    if (!email.trim()) nextErrors.email = 'Bitte gib deine E-Mail-Adresse ein.'
-    if (!password) nextErrors.password = 'Bitte gib dein Passwort ein.'
+    if (!email.trim()) {
+      nextErrors.email = 'Bitte gib deine E-Mail-Adresse ein.'
+    }
+    if (!password) {
+      nextErrors.password = 'Bitte gib dein Passwort ein.'
+    }
 
     setErrors(nextErrors)
     setSubmitError(null)
-    if (Object.keys(nextErrors).length > 0) return
+    if (Object.keys(nextErrors).length > 0) {
+      return
+    }
 
     setIsSubmitting(true)
     const { data, error } = await loginWithPassword(email, password)
@@ -40,7 +46,9 @@ export default function LoginRoute() {
       return
     }
 
-    if (data.session) navigate('/', { replace: true })
+    if (data.session) {
+      navigate('/', { replace: true })
+    }
   }
 
   return (

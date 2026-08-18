@@ -114,7 +114,9 @@ export default function ProfileRoute() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!name.trim()) return
+    if (!name.trim()) {
+      return
+    }
     setIsSubmitting(true)
     setError(null)
     try {
@@ -168,7 +170,9 @@ export default function ProfileRoute() {
     try {
       const { error: signOutError } = await getBrowserClient().auth.signOut()
 
-      if (signOutError) throw signOutError
+      if (signOutError) {
+        throw signOutError
+      }
 
       navigate('/login', { replace: true })
     } catch {
@@ -179,7 +183,9 @@ export default function ProfileRoute() {
 
   async function handleDeleteAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (deleteConfirmation !== 'LÖSCHEN') return
+    if (deleteConfirmation !== 'LÖSCHEN') {
+      return
+    }
 
     setIsDeletingAccount(true)
     setDeleteError(null)
@@ -194,7 +200,9 @@ export default function ProfileRoute() {
   }
 
   function closeDeleteDialog() {
-    if (isDeletingAccount) return
+    if (isDeletingAccount) {
+      return
+    }
     setIsDeleteDialogOpen(false)
     setDeleteConfirmation('')
     setDeleteError(null)
@@ -496,7 +504,9 @@ export default function ProfileRoute() {
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
           role="presentation"
           onPointerDown={(event) => {
-            if (event.currentTarget === event.target) closeDeleteDialog()
+            if (event.currentTarget === event.target) {
+              closeDeleteDialog()
+            }
           }}
         >
           <section

@@ -56,14 +56,18 @@ export async function getMedications() {
     .eq('is_active', true)
     .order('name')
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
   return data satisfies MedicationWithSchedules[]
 }
 
 export async function createMedication(input: MedicationInput) {
   const supabase = getBrowserClient()
   const { data: userData, error: userError } = await supabase.auth.getUser()
-  if (userError || !userData.user) throw userError ?? new Error('Not authenticated')
+  if (userError || !userData.user) {
+    throw userError ?? new Error('Not authenticated')
+  }
 
   const { data: medication, error } = await supabase
     .from('medications')
@@ -81,7 +85,9 @@ export async function createMedication(input: MedicationInput) {
     .select('id')
     .single()
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 
   if (input.scheduledTime) {
     const { error: scheduleError } = await supabase.from('medication_schedules').insert({
@@ -119,7 +125,9 @@ export async function updateMedication(id: string, input: MedicationInput) {
     })
     .eq('id', id)
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 
   if (input.scheduleId) {
     const { error: scheduleError } = await supabase
@@ -132,13 +140,17 @@ export async function updateMedication(id: string, input: MedicationInput) {
       })
       .eq('id', input.scheduleId)
 
-    if (scheduleError) throw scheduleError
+    if (scheduleError) {
+      throw scheduleError
+    }
     return
   }
 
   if (input.scheduledTime) {
     const { data: userData, error: userError } = await supabase.auth.getUser()
-    if (userError || !userData.user) throw userError ?? new Error('Not authenticated')
+    if (userError || !userData.user) {
+      throw userError ?? new Error('Not authenticated')
+    }
 
     const { error: scheduleError } = await supabase.from('medication_schedules').insert({
       user_id: userData.user.id,
@@ -150,7 +162,9 @@ export async function updateMedication(id: string, input: MedicationInput) {
       weekdays: [1, 2, 3, 4, 5, 6, 7],
     })
 
-    if (scheduleError) throw scheduleError
+    if (scheduleError) {
+      throw scheduleError
+    }
   }
 }
 
@@ -160,7 +174,9 @@ export async function deactivateMedication(id: string) {
     .update({ is_active: false })
     .eq('id', id)
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 }
 
 export async function deleteAccount() {
@@ -169,7 +185,9 @@ export async function deleteAccount() {
     body: {},
   })
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 
   await supabase.auth.signOut({ scope: 'local' })
 }

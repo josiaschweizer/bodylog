@@ -26,9 +26,15 @@ export function addEmptyFoodItem(items: FoodItemDraft[]) {
 
 export function getSuggestedMealType(): MealType {
   const hour = new Date().getHours()
-  if (hour < 10) return 'BREAKFAST'
-  if (hour < 15) return 'LUNCH'
-  if (hour < 21) return 'DINNER'
+  if (hour < 10) {
+    return 'BREAKFAST'
+  }
+  if (hour < 15) {
+    return 'LUNCH'
+  }
+  if (hour < 21) {
+    return 'DINNER'
+  }
   return 'SNACK'
 }
 
