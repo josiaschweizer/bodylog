@@ -13,7 +13,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (!isMounted) return
+      if (!isMounted) {
+        return
+      }
       setSession(data.session)
       setIsLoading(false)
     })

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import {
+  AlertTriangle,
   CircleUserRound,
   Clock3,
   LoaderCircle,
@@ -18,6 +19,7 @@ import type { MedicationForm } from '@/lib/tracking'
 import {
   createMedication,
   deactivateMedication,
+  deleteAccount,
   getMedications,
   updateMedication,
 } from '@/methods/profile'
@@ -44,8 +46,12 @@ export default function ProfileRoute() {
   const [editingMedicationId, setEditingMedicationId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [logoutError, setLogoutError] = useState<string | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [activeIngredient, setActiveIngredient] = useState('')
   const [strength, setStrength] = useState('')
@@ -108,7 +114,9 @@ export default function ProfileRoute() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (!name.trim()) return
+    if (!name.trim()) {
+      return
+    }
     setIsSubmitting(true)
     setError(null)
     try {
@@ -162,13 +170,42 @@ export default function ProfileRoute() {
     try {
       const { error: signOutError } = await getBrowserClient().auth.signOut()
 
-      if (signOutError) throw signOutError
+      if (signOutError) {
+        throw signOutError
+      }
 
       navigate('/login', { replace: true })
     } catch {
       setLogoutError('Du konntest nicht abgemeldet werden. Bitte versuche es erneut.')
       setIsSigningOut(false)
     }
+  }
+
+  async function handleDeleteAccount(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (deleteConfirmation !== 'LÖSCHEN') {
+      return
+    }
+
+    setIsDeletingAccount(true)
+    setDeleteError(null)
+
+    try {
+      await deleteAccount()
+      navigate('/register', { replace: true })
+    } catch {
+      setDeleteError('Dein Konto konnte nicht gelöscht werden. Bitte versuche es erneut.')
+      setIsDeletingAccount(false)
+    }
+  }
+
+  function closeDeleteDialog() {
+    if (isDeletingAccount) {
+      return
+    }
+    setIsDeleteDialogOpen(false)
+    setDeleteConfirmation('')
+    setDeleteError(null)
   }
 
   const fieldClass =
@@ -445,6 +482,112 @@ export default function ProfileRoute() {
           {isSigningOut ? 'Wird abgemeldet …' : 'Abmelden'}
         </button>
       </section>
+
+      <section className="mt-6 rounded-2xl border border-red-200 bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="text-lg font-bold text-red-900">Konto löschen</h2>
+        <p className="mt-1 text-sm leading-6 text-red-800">
+          Löscht dein Profil sowie alle erfassten Einträge, Medikamente und übrigen persönlichen
+          Daten dauerhaft.
+        </p>
+        <button
+          type="button"
+          onClick={() => setIsDeleteDialogOpen(true)}
+          className="mt-5 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-red-300 bg-white px-5 py-3 font-semibold text-red-800 transition active:scale-[0.98] active:bg-red-50 sm:w-auto"
+        >
+          <Trash2 size={20} aria-hidden="true" />
+          Konto dauerhaft löschen
+        </button>
+      </section>
+
+      {isDeleteDialogOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+          role="presentation"
+          onPointerDown={(event) => {
+            if (event.currentTarget === event.target) {
+              closeDeleteDialog()
+            }
+          }}
+        >
+          <section
+            className="w-full max-w-lg rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+          >
+            <div className="flex items-start gap-4">
+              <span className="grid size-11 shrink-0 place-items-center rounded-full bg-red-100 text-red-700">
+                <AlertTriangle size={23} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 id="delete-account-title" className="text-xl font-bold text-red-950">
+                  Konto wirklich löschen?
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-red-900">
+                  Diese Aktion kann nicht rückgängig gemacht werden. Alle mit deinem Konto
+                  verbundenen Daten werden dauerhaft gelöscht.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeDeleteDialog}
+                disabled={isDeletingAccount}
+                className="grid size-10 shrink-0 place-items-center rounded-full text-dusty-taupe-600 hover:bg-dusty-taupe-100 disabled:opacity-50"
+                aria-label="Dialog schließen"
+              >
+                <X size={21} aria-hidden="true" />
+              </button>
+            </div>
+
+            <form className="mt-6" onSubmit={handleDeleteAccount}>
+              <label>
+                <span className="mb-2 block text-sm font-semibold text-ash-brown-900">
+                  Gib zur Bestätigung LÖSCHEN ein
+                </span>
+                <input
+                  value={deleteConfirmation}
+                  onChange={(event) => setDeleteConfirmation(event.target.value)}
+                  disabled={isDeletingAccount}
+                  autoComplete="off"
+                  className="w-full rounded-xl border border-red-300 bg-white px-4 py-3 outline-none focus:border-red-500 focus:ring-4 focus:ring-red-100 disabled:opacity-60"
+                />
+              </label>
+
+              {deleteError ? (
+                <p
+                  className="mt-4 rounded-xl bg-red-100 px-4 py-3 text-sm text-red-900"
+                  role="alert"
+                >
+                  {deleteError}
+                </p>
+              ) : null}
+
+              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={closeDeleteDialog}
+                  disabled={isDeletingAccount}
+                  className="min-h-12 rounded-xl border border-dusty-taupe-300 px-5 py-3 font-semibold text-ash-brown-800 disabled:opacity-50"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  disabled={deleteConfirmation !== 'LÖSCHEN' || isDeletingAccount}
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-red-700 px-5 py-3 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {isDeletingAccount ? (
+                    <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
+                  ) : (
+                    <Trash2 size={20} aria-hidden="true" />
+                  )}
+                  {isDeletingAccount ? 'Konto wird gelöscht …' : 'Endgültig löschen'}
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      ) : null}
     </main>
   )
 }

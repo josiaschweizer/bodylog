@@ -90,7 +90,9 @@ export default function NewEntryDialog({
   const dismissTimer = useRef<number | null>(null)
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) {
+      return
+    }
     const previouslyFocusedElement = document.activeElement as HTMLElement | null
     setDragOffset(0)
     setIsDragging(false)
@@ -211,7 +213,9 @@ export default function NewEntryDialog({
       })
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') onClose()
+      if (event.key === 'Escape') {
+        onClose()
+      }
     }
 
     const scrollPosition = window.scrollY
@@ -228,7 +232,9 @@ export default function NewEntryDialog({
     requestAnimationFrame(() => dialogRef.current?.focus({ preventScroll: true }))
     window.addEventListener('keydown', handleKeyDown)
     return () => {
-      if (dismissTimer.current !== null) window.clearTimeout(dismissTimer.current)
+      if (dismissTimer.current !== null) {
+        window.clearTimeout(dismissTimer.current)
+      }
       document.body.style.overflow = previousBodyStyles.overflow
       document.body.style.position = previousBodyStyles.position
       document.body.style.top = previousBodyStyles.top
@@ -401,7 +407,9 @@ export default function NewEntryDialog({
   }
 
   function handleDragStart(event: ReactPointerEvent<HTMLDivElement>) {
-    if (window.innerWidth >= 640 || isSubmitting) return
+    if (window.innerWidth >= 640 || isSubmitting) {
+      return
+    }
     dragStartY.current = event.clientY
     dragStartedAt.current = performance.now()
     setIsDragging(true)
@@ -409,12 +417,16 @@ export default function NewEntryDialog({
   }
 
   function handleDragMove(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!isDragging) return
+    if (!isDragging) {
+      return
+    }
     setDragOffset(Math.max(0, event.clientY - dragStartY.current))
   }
 
   function handleDragEnd(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!isDragging) return
+    if (!isDragging) {
+      return
+    }
     const finalOffset = Math.max(0, event.clientY - dragStartY.current)
     const elapsed = Math.max(performance.now() - dragStartedAt.current, 1)
     const velocity = finalOffset / elapsed
@@ -432,7 +444,9 @@ export default function NewEntryDialog({
     setDragOffset(0)
   }
 
-  if (!isOpen) return null
+  if (!isOpen) {
+    return null
+  }
 
   return (
     <div
@@ -442,7 +456,9 @@ export default function NewEntryDialog({
       }}
       role="presentation"
       onPointerDown={(event) => {
-        if (event.currentTarget === event.target && !isSubmitting) onClose()
+        if (event.currentTarget === event.target && !isSubmitting) {
+          onClose()
+        }
       }}
     >
       <section

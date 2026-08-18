@@ -30,18 +30,27 @@ export default function RegisterRoute() {
     event.preventDefault()
 
     const nextErrors: RegisterErrors = {}
-    if (!firstName.trim()) nextErrors.firstName = 'Bitte gib deinen Vornamen ein.'
-    if (!lastName.trim()) nextErrors.lastName = 'Bitte gib deinen Nachnamen ein.'
-    if (!email.trim()) nextErrors.email = 'Bitte gib deine E-Mail-Adresse ein.'
-    if (password.length < 8)
+    if (!firstName.trim()) {
+      nextErrors.firstName = 'Bitte gib deinen Vornamen ein.'
+    }
+    if (!lastName.trim()) {
+      nextErrors.lastName = 'Bitte gib deinen Nachnamen ein.'
+    }
+    if (!email.trim()) {
+      nextErrors.email = 'Bitte gib deine E-Mail-Adresse ein.'
+    }
+    if (password.length < 8) {
       nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
+    }
     if (passwordConfirmation !== password) {
       nextErrors.passwordConfirmation = 'Die Passwörter stimmen nicht überein.'
     }
 
     setErrors(nextErrors)
     setSubmitError(null)
-    if (Object.keys(nextErrors).length > 0) return
+    if (Object.keys(nextErrors).length > 0) {
+      return
+    }
 
     setIsSubmitting(true)
     const { data, error } = await registerWithPassword({

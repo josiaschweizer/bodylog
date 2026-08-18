@@ -133,7 +133,9 @@ export async function getTrackingEntries(from: Date, to: Date) {
     .lt('occurred_at', to.toISOString())
     .order('occurred_at', { ascending: false })
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
   return data satisfies TrackingEntry[]
 }
 
@@ -146,7 +148,9 @@ export async function createTrackingEntry(input: {
   const supabase = getBrowserClient()
   const { data: userData, error: userError } = await supabase.auth.getUser()
 
-  if (userError || !userData.user) throw userError ?? new Error('Not authenticated')
+  if (userError || !userData.user) {
+    throw userError ?? new Error('Not authenticated')
+  }
 
   const { data, error } = await supabase
     .from('tracking_entries')
@@ -159,7 +163,9 @@ export async function createTrackingEntry(input: {
     .select('id, entry_type, occurred_at, note')
     .single()
 
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 
   try {
     if (input.details?.kind === 'FOOD') {
@@ -167,7 +173,9 @@ export async function createTrackingEntry(input: {
         id: data.id,
         meal_type: input.details.mealType,
       })
-      if (foodError) throw foodError
+      if (foodError) {
+        throw foodError
+      }
 
       const { error: itemsError } = await supabase.from('food_entry_items').insert(
         input.details.items.map((item) => ({
@@ -177,7 +185,9 @@ export async function createTrackingEntry(input: {
           unit: item.unit.trim() || null,
         })),
       )
-      if (itemsError) throw itemsError
+      if (itemsError) {
+        throw itemsError
+      }
     }
 
     if (input.details?.kind === 'STOOL') {
@@ -194,7 +204,9 @@ export async function createTrackingEntry(input: {
         unusual_smell: input.details.unusualSmell,
         complete_evacuation: input.details.completeEvacuation,
       })
-      if (stoolError) throw stoolError
+      if (stoolError) {
+        throw stoolError
+      }
     }
 
     if (input.details?.kind === 'DRINK') {
@@ -205,7 +217,9 @@ export async function createTrackingEntry(input: {
         caffeine_mg: input.details.caffeineMg,
         alcohol_percent: input.details.alcoholPercent,
       })
-      if (drinkError) throw drinkError
+      if (drinkError) {
+        throw drinkError
+      }
     }
 
     if (input.details?.kind === 'SLEEP') {
@@ -220,7 +234,9 @@ export async function createTrackingEntry(input: {
         quality: input.details.quality,
         interruptions: input.details.interruptions,
       })
-      if (sleepError) throw sleepError
+      if (sleepError) {
+        throw sleepError
+      }
     }
 
     if (input.details?.kind === 'SYMPTOM') {
@@ -232,7 +248,9 @@ export async function createTrackingEntry(input: {
         duration_minutes: input.details.durationMinutes,
         body_area: input.details.bodyArea.trim() || null,
       })
-      if (symptomError) throw symptomError
+      if (symptomError) {
+        throw symptomError
+      }
     }
 
     if (input.details?.kind === 'MEDICATION') {
@@ -243,7 +261,9 @@ export async function createTrackingEntry(input: {
         dose_unit: input.details.doseUnit.trim() || null,
         taken_as_needed: input.details.takenAsNeeded,
       })
-      if (medicationError) throw medicationError
+      if (medicationError) {
+        throw medicationError
+      }
     }
 
     if (input.details?.kind === 'BODY_MEASUREMENT') {
@@ -255,7 +275,9 @@ export async function createTrackingEntry(input: {
         systolic_blood_pressure: input.details.systolicBloodPressure,
         diastolic_blood_pressure: input.details.diastolicBloodPressure,
       })
-      if (measurementError) throw measurementError
+      if (measurementError) {
+        throw measurementError
+      }
     }
 
     if (input.details?.kind === 'URINATION') {
@@ -268,7 +290,9 @@ export async function createTrackingEntry(input: {
         burning: input.details.burning,
         nighttime: input.details.nighttime,
       })
-      if (urinationError) throw urinationError
+      if (urinationError) {
+        throw urinationError
+      }
     }
   } catch (detailsError) {
     await supabase.from('tracking_entries').delete().eq('id', data.id)
@@ -295,19 +319,25 @@ export async function updateTrackingEntry(
       note: input.note.trim() || null,
     })
     .eq('id', id)
-  if (error) throw error
+  if (error) {
+    throw error
+  }
 
   if (input.details?.kind === 'FOOD') {
     const { error: foodError } = await supabase.from('food_entries').upsert({
       id,
       meal_type: input.details.mealType,
     })
-    if (foodError) throw foodError
+    if (foodError) {
+      throw foodError
+    }
     const { error: deleteItemsError } = await supabase
       .from('food_entry_items')
       .delete()
       .eq('food_entry_id', id)
-    if (deleteItemsError) throw deleteItemsError
+    if (deleteItemsError) {
+      throw deleteItemsError
+    }
     const { error: itemsError } = await supabase.from('food_entry_items').insert(
       input.details.items.map((item) => ({
         food_entry_id: id,
@@ -316,7 +346,9 @@ export async function updateTrackingEntry(
         unit: item.unit.trim() || null,
       })),
     )
-    if (itemsError) throw itemsError
+    if (itemsError) {
+      throw itemsError
+    }
   }
 
   if (input.details?.kind === 'STOOL') {
@@ -333,7 +365,9 @@ export async function updateTrackingEntry(
       unusual_smell: input.details.unusualSmell,
       complete_evacuation: input.details.completeEvacuation,
     })
-    if (stoolError) throw stoolError
+    if (stoolError) {
+      throw stoolError
+    }
   }
 
   if (input.details?.kind === 'DRINK') {
@@ -344,7 +378,9 @@ export async function updateTrackingEntry(
       caffeine_mg: input.details.caffeineMg,
       alcohol_percent: input.details.alcoholPercent,
     })
-    if (drinkError) throw drinkError
+    if (drinkError) {
+      throw drinkError
+    }
   }
 
   if (input.details?.kind === 'SLEEP') {
@@ -358,7 +394,9 @@ export async function updateTrackingEntry(
       quality: input.details.quality,
       interruptions: input.details.interruptions,
     })
-    if (sleepError) throw sleepError
+    if (sleepError) {
+      throw sleepError
+    }
   }
 
   if (input.details?.kind === 'SYMPTOM') {
@@ -370,7 +408,9 @@ export async function updateTrackingEntry(
       duration_minutes: input.details.durationMinutes,
       body_area: input.details.bodyArea.trim() || null,
     })
-    if (symptomError) throw symptomError
+    if (symptomError) {
+      throw symptomError
+    }
   }
 
   if (input.details?.kind === 'MEDICATION') {
@@ -381,7 +421,9 @@ export async function updateTrackingEntry(
       dose_unit: input.details.doseUnit.trim() || null,
       taken_as_needed: input.details.takenAsNeeded,
     })
-    if (medicationError) throw medicationError
+    if (medicationError) {
+      throw medicationError
+    }
   }
 
   if (input.details?.kind === 'BODY_MEASUREMENT') {
@@ -393,7 +435,9 @@ export async function updateTrackingEntry(
       systolic_blood_pressure: input.details.systolicBloodPressure,
       diastolic_blood_pressure: input.details.diastolicBloodPressure,
     })
-    if (measurementError) throw measurementError
+    if (measurementError) {
+      throw measurementError
+    }
   }
 
   if (input.details?.kind === 'URINATION') {
@@ -406,7 +450,9 @@ export async function updateTrackingEntry(
       burning: input.details.burning,
       nighttime: input.details.nighttime,
     })
-    if (urinationError) throw urinationError
+    if (urinationError) {
+      throw urinationError
+    }
   }
 }
 
@@ -431,10 +477,18 @@ export async function getTrackingSuggestions() {
     ],
   )
 
-  if (drinksResult.error) throw drinksResult.error
-  if (symptomsResult.error) throw symptomsResult.error
-  if (customSymptomsResult.error) throw customSymptomsResult.error
-  if (medicationsResult.error) throw medicationsResult.error
+  if (drinksResult.error) {
+    throw drinksResult.error
+  }
+  if (symptomsResult.error) {
+    throw symptomsResult.error
+  }
+  if (customSymptomsResult.error) {
+    throw customSymptomsResult.error
+  }
+  if (medicationsResult.error) {
+    throw medicationsResult.error
+  }
 
   const drinks = Array.from(
     new Set([

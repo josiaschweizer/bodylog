@@ -27,7 +27,9 @@ export default function ResetPasswordRoute() {
     let isMounted = true
 
     void supabase.auth.getSession().then(({ data }) => {
-      if (!isMounted) return
+      if (!isMounted) {
+        return
+      }
       setIsValidSession(Boolean(data.session))
       setIsCheckingLink(false)
     })
@@ -49,13 +51,18 @@ export default function ResetPasswordRoute() {
     event.preventDefault()
 
     const nextErrors: PasswordErrors = {}
-    if (password.length < 8)
+    if (password.length < 8) {
       nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
-    if (confirmation !== password) nextErrors.confirmation = 'Die Passwörter stimmen nicht überein.'
+    }
+    if (confirmation !== password) {
+      nextErrors.confirmation = 'Die Passwörter stimmen nicht überein.'
+    }
 
     setErrors(nextErrors)
     setSubmitError(null)
-    if (Object.keys(nextErrors).length > 0) return
+    if (Object.keys(nextErrors).length > 0) {
+      return
+    }
 
     setIsSubmitting(true)
     try {
