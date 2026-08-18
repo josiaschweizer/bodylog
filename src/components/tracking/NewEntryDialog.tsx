@@ -444,7 +444,7 @@ export default function NewEntryDialog({
       }}
     >
       <section
-        className={`flex max-h-[calc(100dvh-env(safe-area-inset-top)-0.75rem)] w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-khaki-beige-50 shadow-2xl sm:max-h-[92svh] sm:max-w-2xl sm:rounded-3xl ${
+        className={`flex min-w-0 max-h-[calc(100dvh-env(safe-area-inset-top)-0.75rem)] w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-khaki-beige-50 shadow-2xl sm:max-h-[92svh] sm:max-w-2xl sm:rounded-3xl ${
           isDragging ? '' : 'transition-transform duration-300 ease-out'
         }`}
         style={{ transform: `translate3d(0, ${dragOffset}px, 0)` }}
@@ -485,8 +485,8 @@ export default function NewEntryDialog({
           </button>
         </div>
 
-        <form className="flex min-h-0 flex-1 flex-col" onSubmit={handleSubmit}>
-          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-5 pb-6 pt-2 sm:px-7 sm:pt-3">
+        <form className="flex min-h-0 min-w-0 flex-1 flex-col" onSubmit={handleSubmit}>
+          <div className="min-h-0 min-w-0 flex-1 space-y-6 overflow-x-hidden overflow-y-auto overscroll-contain px-5 pb-6 pt-2 sm:px-7 sm:pt-3">
           <fieldset>
             <legend className="text-sm font-semibold text-ash-brown-800">Kategorie</legend>
             <div className="mt-3 grid grid-cols-2 gap-2 min-[375px]:grid-cols-3">
@@ -508,14 +508,14 @@ export default function NewEntryDialog({
             </div>
           </fieldset>
 
-          <label className="block">
+          <label className="block min-w-0">
             <span className="mb-2 block text-sm font-semibold text-ash-brown-800">Zeitpunkt</span>
             <input
               type="datetime-local"
               required
               value={occurredAt}
               onChange={(event) => setOccurredAt(event.target.value)}
-              className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+              className="min-w-0 max-w-full w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
             />
           </label>
 

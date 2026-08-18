@@ -22,6 +22,19 @@ export type MedicationWithSchedules = {
   }>
 }
 
+export type MedicationInput = {
+  name: string
+  activeIngredient: string
+  strength: number | null
+  strengthUnit: string
+  form: MedicationForm
+  defaultDose: number | null
+  defaultDoseUnit: string
+  scheduledTime: string
+  scheduleId?: string | null
+  notes: string
+}
+
 export async function getMedications() {
   const { data, error } = await getBrowserClient()
     .from('medications')
@@ -45,17 +58,7 @@ export async function getMedications() {
   return data satisfies MedicationWithSchedules[]
 }
 
-export async function createMedication(input: {
-  name: string
-  activeIngredient: string
-  strength: number | null
-  strengthUnit: string
-  form: MedicationForm
-  defaultDose: number | null
-  defaultDoseUnit: string
-  scheduledTime: string
-  notes: string
-}) {
+export async function createMedication(input: MedicationInput) {
   const supabase = getBrowserClient()
   const { data: userData, error: userError } = await supabase.auth.getUser()
   if (userError || !userData.user) throw userError ?? new Error('Not authenticated')
@@ -96,6 +99,57 @@ export async function createMedication(input: {
   }
 
   return medication
+}
+
+export async function updateMedication(id: string, input: MedicationInput) {
+  const supabase = getBrowserClient()
+  const { error } = await supabase
+    .from('medications')
+    .update({
+      name: input.name.trim(),
+      active_ingredient: input.activeIngredient.trim() || null,
+      strength: input.strength,
+      strength_unit: input.strengthUnit.trim() || null,
+      form: input.form,
+      default_dose: input.defaultDose,
+      default_dose_unit: input.defaultDoseUnit.trim() || null,
+      notes: input.notes.trim() || null,
+    })
+    .eq('id', id)
+
+  if (error) throw error
+
+  if (input.scheduleId) {
+    const { error: scheduleError } = await supabase
+      .from('medication_schedules')
+      .update({
+        scheduled_time: input.scheduledTime || null,
+        dose: input.defaultDose,
+        dose_unit: input.defaultDoseUnit.trim() || null,
+        is_active: Boolean(input.scheduledTime),
+      })
+      .eq('id', input.scheduleId)
+
+    if (scheduleError) throw scheduleError
+    return
+  }
+
+  if (input.scheduledTime) {
+    const { data: userData, error: userError } = await supabase.auth.getUser()
+    if (userError || !userData.user) throw userError ?? new Error('Not authenticated')
+
+    const { error: scheduleError } = await supabase.from('medication_schedules').insert({
+      user_id: userData.user.id,
+      medication_id: id,
+      schedule_type: 'SCHEDULED',
+      scheduled_time: input.scheduledTime,
+      dose: input.defaultDose,
+      dose_unit: input.defaultDoseUnit.trim() || null,
+      weekdays: [1, 2, 3, 4, 5, 6, 7],
+    })
+
+    if (scheduleError) throw scheduleError
+  }
 }
 
 export async function deactivateMedication(id: string) {

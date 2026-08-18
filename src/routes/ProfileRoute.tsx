@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
-import { CircleUserRound, Clock3, LoaderCircle, LogOut, Plus, Tablets, Trash2, X } from 'lucide-react'
+import { CircleUserRound, Clock3, LoaderCircle, LogOut, Pencil, Plus, Tablets, Trash2, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/lib/auth-context'
 import getBrowserClient from '@/lib/supabase/getBrowserClient'
 import type { MedicationForm } from '@/lib/tracking'
-import { createMedication, deactivateMedication, getMedications } from '@/methods/profile'
+import { createMedication, deactivateMedication, getMedications, updateMedication } from '@/methods/profile'
 import type { MedicationWithSchedules } from '@/methods/profile'
 
 const MEDICATION_FORMS: Array<{ value: MedicationForm; label: string }> = [
@@ -26,6 +26,7 @@ export default function ProfileRoute() {
   const [medications, setMedications] = useState<MedicationWithSchedules[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingMedicationId, setEditingMedicationId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,13 +51,56 @@ export default function ProfileRoute() {
 
   useEffect(loadMedications, [])
 
+  function resetForm() {
+    setName('')
+    setActiveIngredient('')
+    setStrength('')
+    setStrengthUnit('mg')
+    setForm('TABLET')
+    setDefaultDose('1')
+    setDefaultDoseUnit('Tablette')
+    setScheduledTime('')
+    setNotes('')
+    setEditingMedicationId(null)
+  }
+
+  function handleToggleCreateForm() {
+    if (isFormOpen && !editingMedicationId) {
+      setIsFormOpen(false)
+      resetForm()
+      return
+    }
+
+    resetForm()
+    setIsFormOpen(true)
+  }
+
+  function handleEdit(medication: MedicationWithSchedules) {
+    const schedule = medication.medication_schedules.find((item) => item.is_active)
+    setName(medication.name)
+    setActiveIngredient(medication.active_ingredient ?? '')
+    setStrength(medication.strength?.toString() ?? '')
+    setStrengthUnit(medication.strength_unit ?? 'mg')
+    setForm(medication.form)
+    setDefaultDose(medication.default_dose?.toString() ?? '')
+    setDefaultDoseUnit(medication.default_dose_unit ?? '')
+    setScheduledTime(schedule?.scheduled_time?.slice(0, 5) ?? '')
+    setNotes(medication.notes ?? '')
+    setEditingMedicationId(medication.id)
+    setIsFormOpen(true)
+    setError(null)
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!name.trim()) return
     setIsSubmitting(true)
     setError(null)
     try {
-      await createMedication({
+      const scheduleId = editingMedicationId
+        ? medications.find((item) => item.id === editingMedicationId)?.medication_schedules.find((item) => item.is_active)?.id
+        : null
+      const input = {
         name,
         activeIngredient,
         strength: strength ? Number(strength) : null,
@@ -65,13 +109,17 @@ export default function ProfileRoute() {
         defaultDose: defaultDose ? Number(defaultDose) : null,
         defaultDoseUnit,
         scheduledTime,
+        scheduleId,
         notes,
-      })
-      setName('')
-      setActiveIngredient('')
-      setStrength('')
-      setScheduledTime('')
-      setNotes('')
+      }
+
+      if (editingMedicationId) {
+        await updateMedication(editingMedicationId, input)
+      } else {
+        await createMedication(input)
+      }
+
+      resetForm()
       setIsFormOpen(false)
       loadMedications()
     } catch {
@@ -129,25 +177,29 @@ export default function ProfileRoute() {
             <h2 className="text-xl font-bold text-chocolate-plum-950">Meine Medikamente</h2>
             <p className="mt-1 text-sm text-dusty-taupe-600">Diese Medikamente erscheinen in deiner Schnellauswahl.</p>
           </div>
-          <button type="button" onClick={() => setIsFormOpen((current) => !current)} className="grid size-11 shrink-0 place-items-center rounded-xl bg-chocolate-plum-800 text-white" aria-label="Medikament hinzufügen">
-            {isFormOpen ? <X size={21} /> : <Plus size={21} />}
+          <button type="button" onClick={handleToggleCreateForm} className="grid size-11 shrink-0 place-items-center rounded-xl bg-chocolate-plum-800 text-white" aria-label={isFormOpen && !editingMedicationId ? 'Formular schließen' : 'Medikament hinzufügen'}>
+            {isFormOpen && !editingMedicationId ? <X size={21} /> : <Plus size={21} />}
           </button>
         </div>
 
         {isFormOpen ? (
           <form className="mt-6 rounded-2xl bg-khaki-beige-50 p-4 sm:p-5" onSubmit={handleSubmit}>
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h3 className="font-bold text-chocolate-plum-950">{editingMedicationId ? 'Medikament bearbeiten' : 'Medikament hinzufügen'}</h3>
+              {editingMedicationId ? <button type="button" onClick={() => { resetForm(); setIsFormOpen(false) }} className="grid size-9 place-items-center rounded-lg text-dusty-taupe-500 hover:bg-chocolate-plum-100" aria-label="Bearbeiten abbrechen"><X size={19} /></button> : null}
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <label><span className="mb-2 block text-sm font-semibold">Name *</span><input required value={name} onChange={(event) => setName(event.target.value)} placeholder="z. B. Ibuprofen" className={fieldClass} /></label>
               <label><span className="mb-2 block text-sm font-semibold">Wirkstoff</span><input value={activeIngredient} onChange={(event) => setActiveIngredient(event.target.value)} className={fieldClass} /></label>
               <label><span className="mb-2 block text-sm font-semibold">Stärke</span><div className="grid grid-cols-2 gap-2"><input type="number" min="0" step="0.001" value={strength} onChange={(event) => setStrength(event.target.value)} className={fieldClass} /><input value={strengthUnit} onChange={(event) => setStrengthUnit(event.target.value)} placeholder="mg" className={fieldClass} /></div></label>
               <label><span className="mb-2 block text-sm font-semibold">Form</span><select value={form} onChange={(event) => setForm(event.target.value as MedicationForm)} className={fieldClass}>{MEDICATION_FORMS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
               <label><span className="mb-2 block text-sm font-semibold">Standarddosis</span><div className="grid grid-cols-2 gap-2"><input type="number" min="0" step="0.001" value={defaultDose} onChange={(event) => setDefaultDose(event.target.value)} className={fieldClass} /><input value={defaultDoseUnit} onChange={(event) => setDefaultDoseUnit(event.target.value)} className={fieldClass} /></div></label>
-              <label><span className="mb-2 block text-sm font-semibold">Tägliche Einnahmezeit</span><input type="time" value={scheduledTime} onChange={(event) => setScheduledTime(event.target.value)} className={fieldClass} /></label>
+              <label className="min-w-0"><span className="mb-2 block text-sm font-semibold">Tägliche Einnahmezeit</span><input type="time" value={scheduledTime} onChange={(event) => setScheduledTime(event.target.value)} className={`${fieldClass} min-w-0 max-w-full`} /></label>
               <label className="sm:col-span-2"><span className="mb-2 block text-sm font-semibold">Hinweise</span><textarea rows={2} value={notes} onChange={(event) => setNotes(event.target.value)} className={fieldClass} /></label>
             </div>
             <button type="submit" disabled={isSubmitting} className="mt-5 flex items-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3 font-semibold text-white disabled:opacity-60">
-              {isSubmitting ? <LoaderCircle className="animate-spin" size={19} /> : <Plus size={19} />}
-              Speichern
+              {isSubmitting ? <LoaderCircle className="animate-spin" size={19} /> : editingMedicationId ? <Pencil size={19} /> : <Plus size={19} />}
+              {editingMedicationId ? 'Änderungen speichern' : 'Speichern'}
             </button>
           </form>
         ) : null}
@@ -169,7 +221,10 @@ export default function ProfileRoute() {
                   <p key={schedule.id} className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-chocolate-plum-700"><Clock3 size={14} /> täglich um {schedule.scheduled_time?.slice(0, 5)}</p>
                 ))}
               </div>
-              <button type="button" onClick={() => handleDeactivate(medication.id)} className="grid size-11 shrink-0 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${medication.name} entfernen`}><Trash2 size={18} /></button>
+              <div className="flex shrink-0 gap-1">
+                <button type="button" onClick={() => handleEdit(medication)} className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${medication.name} bearbeiten`}><Pencil size={18} /></button>
+                <button type="button" onClick={() => handleDeactivate(medication.id)} className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${medication.name} entfernen`}><Trash2 size={18} /></button>
+              </div>
             </article>
           ))}
         </div>
