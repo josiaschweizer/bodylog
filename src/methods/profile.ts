@@ -38,7 +38,8 @@ export type MedicationInput = {
 export async function getMedications() {
   const { data, error } = await getBrowserClient()
     .from('medications')
-    .select(`
+    .select(
+      `
       id,
       name,
       active_ingredient,
@@ -50,7 +51,8 @@ export async function getMedications() {
       notes,
       is_active,
       medication_schedules (id, scheduled_time, dose, dose_unit, weekdays, is_active)
-    `)
+    `,
+    )
     .eq('is_active', true)
     .order('name')
 

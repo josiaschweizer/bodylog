@@ -1,0 +1,4 @@
+dist/
+node_modules/
+src/types/Database.ts
+pnpm-lock.yaml

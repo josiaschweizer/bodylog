@@ -43,7 +43,12 @@ export default function DashboardRoute() {
     }),
   )
 
-  const greeting = new Date().getHours() < 12 ? 'Guten Morgen' : new Date().getHours() < 18 ? 'Guten Tag' : 'Guten Abend'
+  const greeting =
+    new Date().getHours() < 12
+      ? 'Guten Morgen'
+      : new Date().getHours() < 18
+        ? 'Guten Tag'
+        : 'Guten Abend'
 
   return (
     <main className="mx-auto w-full max-w-7xl px-5 pb-36 pt-7 sm:px-8 lg:px-10 lg:pb-10 lg:pt-10">
@@ -51,7 +56,8 @@ export default function DashboardRoute() {
         <div>
           <p className="text-sm font-semibold text-chocolate-plum-600">Heute im Überblick</p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-chocolate-plum-950 sm:text-4xl">
-            {greeting}{firstName ? `, ${firstName}` : ''}
+            {greeting}
+            {firstName ? `, ${firstName}` : ''}
           </h1>
           <p className="mt-2 text-dusty-taupe-600">
             {new Intl.DateTimeFormat('de-CH', { dateStyle: 'full' }).format(new Date())}
@@ -68,25 +74,47 @@ export default function DashboardRoute() {
       </header>
 
       {error ? (
-        <p className="mt-6 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">{error}</p>
+        <p
+          className="mt-6 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800"
+          role="alert"
+        >
+          {error}
+        </p>
       ) : null}
 
-      <section className="mt-7 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4" aria-label="Tageskennzahlen">
+      <section
+        className="mt-7 grid grid-cols-2 gap-3 sm:mt-8 sm:grid-cols-3 sm:gap-4"
+        aria-label="Tageskennzahlen"
+      >
         {[
-          { label: 'Einträge heute', value: isLoading ? '–' : todayEntries.length, icon: CalendarDays },
+          {
+            label: 'Einträge heute',
+            value: isLoading ? '–' : todayEntries.length,
+            icon: CalendarDays,
+          },
           { label: 'Kategorien', value: isLoading ? '–' : categoryCount, icon: Layers3 },
           {
             label: 'Letzter Eintrag',
-            value: isLoading || !todayEntries[0] ? '–' : new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' }).format(new Date(todayEntries[0].occurred_at)),
+            value:
+              isLoading || !todayEntries[0]
+                ? '–'
+                : new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' }).format(
+                    new Date(todayEntries[0].occurred_at),
+                  ),
             icon: Clock3,
           },
         ].map(({ label, value, icon: Icon }, index) => (
-          <article key={label} className={`rounded-2xl border border-dusty-taupe-200 bg-white p-4 shadow-sm sm:p-5 ${index === 0 ? 'col-span-2 sm:col-span-1' : ''}`}>
+          <article
+            key={label}
+            className={`rounded-2xl border border-dusty-taupe-200 bg-white p-4 shadow-sm sm:p-5 ${index === 0 ? 'col-span-2 sm:col-span-1' : ''}`}
+          >
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-dusty-taupe-600">{label}</p>
               <Icon className="text-chocolate-plum-500" size={20} aria-hidden="true" />
             </div>
-            <p className="mt-2 text-2xl font-bold text-chocolate-plum-950 sm:mt-3 sm:text-3xl">{value}</p>
+            <p className="mt-2 text-2xl font-bold text-chocolate-plum-950 sm:mt-3 sm:text-3xl">
+              {value}
+            </p>
           </article>
         ))}
       </section>
@@ -95,16 +123,25 @@ export default function DashboardRoute() {
         <section className="rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm sm:p-6">
           <div>
             <h2 className="text-lg font-bold text-chocolate-plum-950">Kategorien heute</h2>
-            <p className="mt-1 text-sm text-dusty-taupe-600">Verteilung deiner heutigen Aktivitäten</p>
+            <p className="mt-1 text-sm text-dusty-taupe-600">
+              Verteilung deiner heutigen Aktivitäten
+            </p>
           </div>
           <div className="mt-5 space-y-3">
             {categoryData.length === 0 && !isLoading ? (
-              <p className="rounded-xl bg-khaki-beige-50 px-4 py-8 text-center text-sm text-dusty-taupe-600">Noch keine Daten vorhanden.</p>
+              <p className="rounded-xl bg-khaki-beige-50 px-4 py-8 text-center text-sm text-dusty-taupe-600">
+                Noch keine Daten vorhanden.
+              </p>
             ) : (
               categoryData.map((category) => (
-                <div key={category.entryType} className="flex items-center justify-between rounded-xl bg-khaki-beige-50 px-4 py-3">
+                <div
+                  key={category.entryType}
+                  className="flex items-center justify-between rounded-xl bg-khaki-beige-50 px-4 py-3"
+                >
                   <span className="font-medium text-ash-brown-800">{category.label}</span>
-                  <span className="grid size-8 place-items-center rounded-full bg-chocolate-plum-100 text-sm font-bold text-chocolate-plum-800">{category.count}</span>
+                  <span className="grid size-8 place-items-center rounded-full bg-chocolate-plum-100 text-sm font-bold text-chocolate-plum-800">
+                    {category.count}
+                  </span>
                 </div>
               ))
             )}
@@ -117,29 +154,50 @@ export default function DashboardRoute() {
               <h2 className="text-lg font-bold text-chocolate-plum-950">Tagesverlauf</h2>
               <p className="mt-1 text-sm text-dusty-taupe-600">Alle Aktivitäten von heute</p>
             </div>
-            <span className="rounded-full bg-khaki-beige-100 px-3 py-1 text-xs font-semibold text-khaki-beige-700">{todayEntries.length}</span>
+            <span className="rounded-full bg-khaki-beige-100 px-3 py-1 text-xs font-semibold text-khaki-beige-700">
+              {todayEntries.length}
+            </span>
           </div>
 
           <div className="mt-5 space-y-1">
             {!isLoading && todayEntries.length === 0 ? (
               <div className="rounded-xl bg-khaki-beige-50 px-4 py-8 text-center">
                 <p className="font-medium text-ash-brown-800">Noch keine Einträge heute</p>
-                <button type="button" onClick={openNewEntry} className="mt-2 text-sm font-semibold text-chocolate-plum-700">Ersten Eintrag erfassen</button>
+                <button
+                  type="button"
+                  onClick={openNewEntry}
+                  className="mt-2 text-sm font-semibold text-chocolate-plum-700"
+                >
+                  Ersten Eintrag erfassen
+                </button>
               </div>
             ) : (
               todayEntries.map((entry) => (
-                <article key={entry.id} className="border-b border-dusty-taupe-100 py-4 last:border-0">
+                <article
+                  key={entry.id}
+                  className="border-b border-dusty-taupe-100 py-4 last:border-0"
+                >
                   <div className="min-w-0">
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex min-w-0 items-center gap-3">
                         <div className="size-2.5 shrink-0 rounded-full bg-chocolate-plum-500" />
-                        <p className="font-semibold text-ash-brown-900">{getTrackingTypeLabel(entry.entry_type)}</p>
+                        <p className="font-semibold text-ash-brown-900">
+                          {getTrackingTypeLabel(entry.entry_type)}
+                        </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <time className="shrink-0 text-xs font-medium text-dusty-taupe-500">
-                          {new Intl.DateTimeFormat('de-CH', { hour: '2-digit', minute: '2-digit' }).format(new Date(entry.occurred_at))}
+                          {new Intl.DateTimeFormat('de-CH', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          }).format(new Date(entry.occurred_at))}
                         </time>
-                        <button type="button" onClick={() => openEditEntry(entry)} className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200" aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}>
+                        <button
+                          type="button"
+                          onClick={() => openEditEntry(entry)}
+                          className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 transition hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200"
+                          aria-label={`${getTrackingTypeLabel(entry.entry_type)} bearbeiten`}
+                        >
                           <Pencil size={15} aria-hidden="true" />
                         </button>
                       </div>
@@ -150,7 +208,9 @@ export default function DashboardRoute() {
                       </p>
                     ) : null}
                     {entry.note && entry.note !== getTrackingEntrySummary(entry) ? (
-                      <p className="ml-[1.375rem] mt-2 rounded-lg bg-khaki-beige-50 px-3 py-2 text-sm text-dusty-taupe-700">{entry.note}</p>
+                      <p className="ml-[1.375rem] mt-2 rounded-lg bg-khaki-beige-50 px-3 py-2 text-sm text-dusty-taupe-700">
+                        {entry.note}
+                      </p>
                     ) : null}
                   </div>
                 </article>

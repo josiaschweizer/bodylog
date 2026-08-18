@@ -25,8 +25,17 @@ export default function BodyMeasurementFields({ value, onChange }: BodyMeasureme
       <div className="grid gap-3 sm:grid-cols-2">
         {fields.map((field) => (
           <label key={field.key}>
-            <span className="mb-2 block text-sm font-semibold text-ash-brown-800">{field.label}</span>
-            <input type="number" min="0" step={field.step} value={value[field.key]} onChange={(event) => update({ [field.key]: event.target.value })} className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-3 py-3 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100" />
+            <span className="mb-2 block text-sm font-semibold text-ash-brown-800">
+              {field.label}
+            </span>
+            <input
+              type="number"
+              min="0"
+              step={field.step}
+              value={value[field.key]}
+              onChange={(event) => update({ [field.key]: event.target.value })}
+              className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-3 py-3 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+            />
           </label>
         ))}
       </div>

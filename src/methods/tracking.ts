@@ -78,7 +78,8 @@ export type TrackingEntryDetails =
 export async function getTrackingEntries(from: Date, to: Date) {
   const { data, error } = await getBrowserClient()
     .from('tracking_entries')
-    .select(`
+    .select(
+      `
       id,
       entry_type,
       occurred_at,
@@ -126,7 +127,8 @@ export async function getTrackingEntries(from: Date, to: Date) {
         diastolic_blood_pressure
       ),
       urination_entries (amount, color, urgency, pain_level, burning, nighttime)
-    `)
+    `,
+    )
     .gte('occurred_at', from.toISOString())
     .lt('occurred_at', to.toISOString())
     .order('occurred_at', { ascending: false })
@@ -410,16 +412,24 @@ export async function updateTrackingEntry(
 
 export async function getTrackingSuggestions() {
   const supabase = getBrowserClient()
-  const [drinksResult, symptomsResult, customSymptomsResult, medicationsResult] = await Promise.all([
-    supabase.from('drink_entries').select('drink_name').limit(100),
-    supabase.from('symptoms').select('id, name').eq('is_active', true).order('name'),
-    supabase.from('symptom_entries').select('custom_name').not('custom_name', 'is', null).limit(100),
-    supabase
-      .from('medications')
-      .select('id, name, active_ingredient, strength, strength_unit, form, default_dose, default_dose_unit, notes, is_active')
-      .eq('is_active', true)
-      .order('name'),
-  ])
+  const [drinksResult, symptomsResult, customSymptomsResult, medicationsResult] = await Promise.all(
+    [
+      supabase.from('drink_entries').select('drink_name').limit(100),
+      supabase.from('symptoms').select('id, name').eq('is_active', true).order('name'),
+      supabase
+        .from('symptom_entries')
+        .select('custom_name')
+        .not('custom_name', 'is', null)
+        .limit(100),
+      supabase
+        .from('medications')
+        .select(
+          'id, name, active_ingredient, strength, strength_unit, form, default_dose, default_dose_unit, notes, is_active',
+        )
+        .eq('is_active', true)
+        .order('name'),
+    ],
+  )
 
   if (drinksResult.error) throw drinksResult.error
   if (symptomsResult.error) throw symptomsResult.error

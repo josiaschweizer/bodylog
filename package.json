@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "db:types": "supabase gen types typescript --linked --schema public > src/types/Database.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "oxlint",
     "preview": "vite preview"
   },
@@ -24,6 +26,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "oxlint": "^1.75.0",
+    "prettier": "^3.9.6",
     "supabase": "^2.114.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",

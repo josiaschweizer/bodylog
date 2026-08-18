@@ -32,24 +32,37 @@ export default function FoodEntryFields({
           onChange={(event) => onMealTypeChange(event.target.value as MealType)}
           className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
         >
-          {MEAL_TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
+          {MEAL_TYPES.map((type) => (
+            <option key={type.value} value={type.value}>
+              {type.label}
+            </option>
+          ))}
         </select>
       </label>
 
       <div className="mt-5 space-y-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-semibold text-ash-brown-800">Was hast du gegessen?</p>
-          <span className="text-xs text-dusty-taupe-500">{items.length} Position{items.length === 1 ? '' : 'en'}</span>
+          <span className="text-xs text-dusty-taupe-500">
+            {items.length} Position{items.length === 1 ? '' : 'en'}
+          </span>
         </div>
 
         {items.map((item, index) => (
-          <div key={item.id} className="rounded-xl border border-dusty-taupe-200 bg-khaki-beige-50 p-3">
+          <div
+            key={item.id}
+            className="rounded-xl border border-dusty-taupe-200 bg-khaki-beige-50 p-3"
+          >
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-bold uppercase tracking-wide text-chocolate-plum-600">Position {index + 1}</span>
+              <span className="text-xs font-bold uppercase tracking-wide text-chocolate-plum-600">
+                Position {index + 1}
+              </span>
               {items.length > 1 ? (
                 <button
                   type="button"
-                  onClick={() => onItemsChange(items.filter((candidate) => candidate.id !== item.id))}
+                  onClick={() =>
+                    onItemsChange(items.filter((candidate) => candidate.id !== item.id))
+                  }
                   className="grid size-11 place-items-center rounded-xl text-dusty-taupe-500 hover:bg-chocolate-plum-100 hover:text-chocolate-plum-700 active:bg-chocolate-plum-200"
                   aria-label={`Position ${index + 1} entfernen`}
                 >

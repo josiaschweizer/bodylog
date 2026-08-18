@@ -49,7 +49,8 @@ export default function ResetPasswordRoute() {
     event.preventDefault()
 
     const nextErrors: PasswordErrors = {}
-    if (password.length < 8) nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
+    if (password.length < 8)
+      nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
     if (confirmation !== password) nextErrors.confirmation = 'Die Passwörter stimmen nicht überein.'
 
     setErrors(nextErrors)
@@ -67,7 +68,9 @@ export default function ResetPasswordRoute() {
       await getBrowserClient().auth.signOut()
       navigate('/login', { replace: true, state: { passwordReset: true } })
     } catch {
-      setSubmitError('Das Passwort konnte nicht geändert werden. Bitte fordere einen neuen Link an.')
+      setSubmitError(
+        'Das Passwort konnte nicht geändert werden. Bitte fordere einen neuen Link an.',
+      )
     } finally {
       setIsSubmitting(false)
     }
@@ -89,7 +92,10 @@ export default function ResetPasswordRoute() {
         title="Link nicht mehr gültig"
         description="Der Link ist abgelaufen, wurde bereits verwendet oder ist unvollständig."
         footer={
-          <Link className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/login">
+          <Link
+            className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/login"
+          >
             Zurück zur Anmeldung
           </Link>
         }
@@ -139,7 +145,10 @@ export default function ResetPasswordRoute() {
         />
 
         {submitError ? (
-          <p className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">
+          <p
+            className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800"
+            role="alert"
+          >
             {submitError}
           </p>
         ) : null}
@@ -149,7 +158,11 @@ export default function ResetPasswordRoute() {
           disabled={isSubmitting}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3.5 font-semibold text-white transition hover:bg-chocolate-plum-900 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? <LoaderCircle className="animate-spin" size={20} aria-hidden="true" /> : <KeyRound size={20} aria-hidden="true" />}
+          {isSubmitting ? (
+            <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
+          ) : (
+            <KeyRound size={20} aria-hidden="true" />
+          )}
           {isSubmitting ? 'Passwort wird geändert …' : 'Passwort speichern'}
         </button>
       </form>

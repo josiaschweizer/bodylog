@@ -33,7 +33,8 @@ export default function RegisterRoute() {
     if (!firstName.trim()) nextErrors.firstName = 'Bitte gib deinen Vornamen ein.'
     if (!lastName.trim()) nextErrors.lastName = 'Bitte gib deinen Nachnamen ein.'
     if (!email.trim()) nextErrors.email = 'Bitte gib deine E-Mail-Adresse ein.'
-    if (password.length < 8) nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
+    if (password.length < 8)
+      nextErrors.password = 'Das Passwort muss mindestens 8 Zeichen lang sein.'
     if (passwordConfirmation !== password) {
       nextErrors.passwordConfirmation = 'Die Passwörter stimmen nicht überein.'
     }
@@ -70,7 +71,10 @@ export default function RegisterRoute() {
         title="Fast geschafft"
         description="Bestätige deine E-Mail-Adresse, um dein Konto zu aktivieren."
         footer={
-          <Link className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/login">
+          <Link
+            className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/login"
+          >
             Zur Anmeldung
           </Link>
         }
@@ -93,7 +97,10 @@ export default function RegisterRoute() {
       footer={
         <>
           Du hast bereits ein Konto?{' '}
-          <Link className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/login">
+          <Link
+            className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/login"
+          >
             Jetzt anmelden
           </Link>
         </>
@@ -152,7 +159,10 @@ export default function RegisterRoute() {
         />
 
         {submitError ? (
-          <p className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">
+          <p
+            className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800"
+            role="alert"
+          >
             {submitError}
           </p>
         ) : null}

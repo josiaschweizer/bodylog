@@ -46,7 +46,10 @@ export default function ForgotPasswordRoute() {
         title="Prüfe deinen Posteingang"
         description="Wenn ein Konto zu dieser Adresse existiert, erhältst du einen Link zum Zurücksetzen."
         footer={
-          <Link className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/login">
+          <Link
+            className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/login"
+          >
             Zurück zur Anmeldung
           </Link>
         }
@@ -55,7 +58,8 @@ export default function ForgotPasswordRoute() {
           <MailCheck className="mx-auto text-chocolate-plum-700" size={42} aria-hidden="true" />
           <p className="mt-4 font-semibold text-ash-brown-900">E-Mail wurde angefordert</p>
           <p className="mt-2 text-sm leading-6 text-dusty-taupe-700">
-            Öffne den Link in der E-Mail an <strong>{submittedEmail}</strong>. Er ist nur für begrenzte Zeit gültig.
+            Öffne den Link in der E-Mail an <strong>{submittedEmail}</strong>. Er ist nur für
+            begrenzte Zeit gültig.
           </p>
         </div>
       </AuthLayout>
@@ -67,7 +71,10 @@ export default function ForgotPasswordRoute() {
       title="Passwort zurücksetzen"
       description="Gib die E-Mail-Adresse deines BodyLog-Kontos ein."
       footer={
-        <Link className="inline-flex items-center gap-1.5 font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/login">
+        <Link
+          className="inline-flex items-center gap-1.5 font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+          to="/login"
+        >
           <ArrowLeft size={16} aria-hidden="true" />
           Zurück zur Anmeldung
         </Link>
@@ -86,7 +93,10 @@ export default function ForgotPasswordRoute() {
         />
 
         {submitError ? (
-          <p className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">
+          <p
+            className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800"
+            role="alert"
+          >
             {submitError}
           </p>
         ) : null}
@@ -96,7 +106,9 @@ export default function ForgotPasswordRoute() {
           disabled={isSubmitting}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3.5 font-semibold text-white transition hover:bg-chocolate-plum-900 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? <LoaderCircle className="animate-spin" size={20} aria-hidden="true" /> : null}
+          {isSubmitting ? (
+            <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
+          ) : null}
           {isSubmitting ? 'Wird gesendet …' : 'Link anfordern'}
         </button>
       </form>

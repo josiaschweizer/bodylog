@@ -9,12 +9,7 @@ type AuthLayoutProps = {
   footer: ReactNode
 }
 
-export default function AuthLayout({
-  children,
-  title,
-  description,
-  footer,
-}: AuthLayoutProps) {
+export default function AuthLayout({ children, title, description, footer }: AuthLayoutProps) {
   return (
     <main className="grid min-h-svh bg-khaki-beige-50 lg:grid-cols-[minmax(0,1fr)_minmax(32rem,0.8fr)]">
       <section className="relative hidden overflow-hidden bg-chocolate-plum-900 p-12 text-khaki-beige-50 lg:flex lg:flex-col lg:justify-between">
@@ -39,8 +34,8 @@ export default function AuthLayout({
             Verstehe, was dir wirklich guttut.
           </h2>
           <p className="mt-6 max-w-lg text-lg leading-8 text-khaki-beige-200">
-            Halte Gesundheit, Gewohnheiten und Wohlbefinden an einem geschützten Ort
-            fest und erkenne Zusammenhänge im Alltag.
+            Halte Gesundheit, Gewohnheiten und Wohlbefinden an einem geschützten Ort fest und
+            erkenne Zusammenhänge im Alltag.
           </p>
         </div>
 

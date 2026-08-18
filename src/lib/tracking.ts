@@ -21,10 +21,7 @@ export type Medication = Pick<
   | 'is_active'
 >
 
-export type SymptomSuggestion = Pick<
-  Database['public']['Tables']['symptoms']['Row'],
-  'id' | 'name'
->
+export type SymptomSuggestion = Pick<Database['public']['Tables']['symptoms']['Row'], 'id' | 'name'>
 
 export type FoodEntryDetails = Pick<
   Database['public']['Tables']['food_entries']['Row'],

@@ -109,7 +109,10 @@ export default function AppLayout() {
         Neu
       </button>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5.25rem+env(safe-area-inset-bottom))] grid-cols-3 border-t border-dusty-taupe-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(29,25,22,0.06)] lg:hidden" aria-label="Mobile Navigation">
+      <nav
+        className="fixed inset-x-0 bottom-0 z-20 grid h-[calc(5.25rem+env(safe-area-inset-bottom))] grid-cols-3 border-t border-dusty-taupe-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(29,25,22,0.06)] lg:hidden"
+        aria-label="Mobile Navigation"
+      >
         {navigation.map(({ to, label, icon: Icon, end }) => (
           <NavLink
             key={to}

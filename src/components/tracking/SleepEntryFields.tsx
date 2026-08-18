@@ -13,7 +13,9 @@ export default function SleepEntryFields({ value, onChange }: SleepEntryFieldsPr
   return (
     <fieldset className="rounded-2xl border border-dusty-taupe-200 bg-white p-4 sm:p-5">
       <legend className="px-2 text-sm font-bold text-chocolate-plum-800">Details zum Schlaf</legend>
-      <p className="mb-4 text-sm text-dusty-taupe-600">Der gewählte Zeitpunkt gilt als Ende des Schlafs.</p>
+      <p className="mb-4 text-sm text-dusty-taupe-600">
+        Der gewählte Zeitpunkt gilt als Ende des Schlafs.
+      </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {[
           { key: 'hours', label: 'Stunden', min: 0, max: 24 },
@@ -22,7 +24,9 @@ export default function SleepEntryFields({ value, onChange }: SleepEntryFieldsPr
           { key: 'interruptions', label: 'Unterbrechungen', min: 0, max: 50 },
         ].map((field) => (
           <label key={field.key}>
-            <span className="mb-2 block text-xs font-semibold text-ash-brown-800 sm:text-sm">{field.label}</span>
+            <span className="mb-2 block text-xs font-semibold text-ash-brown-800 sm:text-sm">
+              {field.label}
+            </span>
             <input
               type="number"
               min={field.min}

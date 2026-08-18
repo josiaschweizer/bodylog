@@ -95,7 +95,9 @@ export default function NewEntryDialog({
     setDragOffset(0)
     setIsDragging(false)
     setEntryType(entryToEdit?.entry_type ?? 'SYMPTOM')
-    setOccurredAt(getLocalDateTimeValue(entryToEdit ? new Date(entryToEdit.occurred_at) : new Date()))
+    setOccurredAt(
+      getLocalDateTimeValue(entryToEdit ? new Date(entryToEdit.occurred_at) : new Date()),
+    )
     setNote(entryToEdit?.note ?? '')
     setMealType(entryToEdit?.food_entries?.meal_type ?? getSuggestedMealType())
     setFoodItems(
@@ -176,8 +178,7 @@ export default function NewEntryDialog({
       entryToEdit?.body_measurements
         ? {
             weightKg: entryToEdit.body_measurements.weight_kg?.toString() ?? '',
-            temperatureCelsius:
-              entryToEdit.body_measurements.temperature_celsius?.toString() ?? '',
+            temperatureCelsius: entryToEdit.body_measurements.temperature_celsius?.toString() ?? '',
             pulseBpm: entryToEdit.body_measurements.pulse_bpm?.toString() ?? '',
             systolicBloodPressure:
               entryToEdit.body_measurements.systolic_blood_pressure?.toString() ?? '',
@@ -311,7 +312,8 @@ export default function NewEntryDialog({
         return
       }
       const matchingSymptom = symptomSuggestions.find(
-        (item) => item.name.toLocaleLowerCase('de-CH') === symptom.name.trim().toLocaleLowerCase('de-CH'),
+        (item) =>
+          item.name.toLocaleLowerCase('de-CH') === symptom.name.trim().toLocaleLowerCase('de-CH'),
       )
       details = {
         kind: 'SYMPTOM',
@@ -487,92 +489,100 @@ export default function NewEntryDialog({
 
         <form className="flex min-h-0 min-w-0 flex-1 flex-col" onSubmit={handleSubmit}>
           <div className="min-h-0 min-w-0 flex-1 space-y-6 overflow-x-hidden overflow-y-auto overscroll-contain px-5 pb-6 pt-2 sm:px-7 sm:pt-3">
-          <fieldset>
-            <legend className="text-sm font-semibold text-ash-brown-800">Kategorie</legend>
-            <div className="mt-3 grid grid-cols-2 gap-2 min-[375px]:grid-cols-3">
-              {TRACKING_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
-                  disabled={Boolean(entryToEdit)}
-                  onClick={() => setEntryType(type.value)}
-                  className={`min-h-12 rounded-xl border px-2 py-2 text-sm font-medium transition ${
-                    entryType === type.value
-                      ? 'border-chocolate-plum-700 bg-chocolate-plum-700 text-white'
-                      : 'border-dusty-taupe-200 bg-white text-ash-brown-800 hover:border-dusty-taupe-400 disabled:cursor-not-allowed disabled:opacity-45'
-                  }`}
-                >
-                  {type.label}
-                </button>
-              ))}
-            </div>
-          </fieldset>
+            <fieldset>
+              <legend className="text-sm font-semibold text-ash-brown-800">Kategorie</legend>
+              <div className="mt-3 grid grid-cols-2 gap-2 min-[375px]:grid-cols-3">
+                {TRACKING_TYPES.map((type) => (
+                  <button
+                    key={type.value}
+                    type="button"
+                    disabled={Boolean(entryToEdit)}
+                    onClick={() => setEntryType(type.value)}
+                    className={`min-h-12 rounded-xl border px-2 py-2 text-sm font-medium transition ${
+                      entryType === type.value
+                        ? 'border-chocolate-plum-700 bg-chocolate-plum-700 text-white'
+                        : 'border-dusty-taupe-200 bg-white text-ash-brown-800 hover:border-dusty-taupe-400 disabled:cursor-not-allowed disabled:opacity-45'
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
 
-          <label className="block min-w-0">
-            <span className="mb-2 block text-sm font-semibold text-ash-brown-800">Zeitpunkt</span>
-            <input
-              type="datetime-local"
-              required
-              value={occurredAt}
-              onChange={(event) => setOccurredAt(event.target.value)}
-              className="min-w-0 max-w-full w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
-            />
-          </label>
+            <label className="block min-w-0">
+              <span className="mb-2 block text-sm font-semibold text-ash-brown-800">Zeitpunkt</span>
+              <input
+                type="datetime-local"
+                required
+                value={occurredAt}
+                onChange={(event) => setOccurredAt(event.target.value)}
+                className="min-w-0 max-w-full w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+              />
+            </label>
 
-          {entryType === 'FOOD' ? (
-            <FoodEntryFields
-              mealType={mealType}
-              onMealTypeChange={setMealType}
-              items={foodItems}
-              onItemsChange={setFoodItems}
-            />
-          ) : null}
+            {entryType === 'FOOD' ? (
+              <FoodEntryFields
+                mealType={mealType}
+                onMealTypeChange={setMealType}
+                items={foodItems}
+                onItemsChange={setFoodItems}
+              />
+            ) : null}
 
-          {entryType === 'STOOL' ? (
-            <StoolEntryFields value={stool} onChange={setStool} />
-          ) : null}
+            {entryType === 'STOOL' ? <StoolEntryFields value={stool} onChange={setStool} /> : null}
 
-          {entryType === 'DRINK' ? (
-            <DrinkEntryFields value={drink} suggestions={drinkSuggestions} onChange={setDrink} />
-          ) : null}
+            {entryType === 'DRINK' ? (
+              <DrinkEntryFields value={drink} suggestions={drinkSuggestions} onChange={setDrink} />
+            ) : null}
 
-          {entryType === 'SLEEP' ? (
-            <SleepEntryFields value={sleep} onChange={setSleep} />
-          ) : null}
+            {entryType === 'SLEEP' ? <SleepEntryFields value={sleep} onChange={setSleep} /> : null}
 
-          {entryType === 'SYMPTOM' ? (
-            <SymptomEntryFields value={symptom} suggestions={symptomSuggestions} onChange={setSymptom} />
-          ) : null}
+            {entryType === 'SYMPTOM' ? (
+              <SymptomEntryFields
+                value={symptom}
+                suggestions={symptomSuggestions}
+                onChange={setSymptom}
+              />
+            ) : null}
 
-          {entryType === 'MEDICATION' ? (
-            <MedicationEntryFields value={medication} medications={medications} onChange={setMedication} />
-          ) : null}
+            {entryType === 'MEDICATION' ? (
+              <MedicationEntryFields
+                value={medication}
+                medications={medications}
+                onChange={setMedication}
+              />
+            ) : null}
 
-          {entryType === 'BODY_MEASUREMENT' ? (
-            <BodyMeasurementFields value={bodyMeasurement} onChange={setBodyMeasurement} />
-          ) : null}
+            {entryType === 'BODY_MEASUREMENT' ? (
+              <BodyMeasurementFields value={bodyMeasurement} onChange={setBodyMeasurement} />
+            ) : null}
 
-          {entryType === 'URINATION' ? (
-            <UrinationEntryFields value={urination} onChange={setUrination} />
-          ) : null}
+            {entryType === 'URINATION' ? (
+              <UrinationEntryFields value={urination} onChange={setUrination} />
+            ) : null}
 
-          <label className="block">
-            <span className="mb-2 block text-sm font-semibold text-ash-brown-800">Notiz (optional)</span>
-            <textarea
-              rows={3}
-              value={note}
-              onChange={(event) => setNote(event.target.value)}
-              placeholder="Was ist passiert?"
-              className="w-full resize-none rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none placeholder:text-dusty-taupe-400 focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
-            />
-          </label>
+            <label className="block">
+              <span className="mb-2 block text-sm font-semibold text-ash-brown-800">
+                Notiz (optional)
+              </span>
+              <textarea
+                rows={3}
+                value={note}
+                onChange={(event) => setNote(event.target.value)}
+                placeholder="Was ist passiert?"
+                className="w-full resize-none rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 text-ash-brown-950 outline-none placeholder:text-dusty-taupe-400 focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+              />
+            </label>
 
-          {error ? (
-            <p className="rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">
-              {error}
-            </p>
-          ) : null}
-
+            {error ? (
+              <p
+                className="rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800"
+                role="alert"
+              >
+                {error}
+              </p>
+            ) : null}
           </div>
 
           <div className="shrink-0 border-t border-dusty-taupe-200 bg-khaki-beige-50/95 px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:px-7 sm:pb-7 sm:pt-4">

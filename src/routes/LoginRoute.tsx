@@ -50,7 +50,10 @@ export default function LoginRoute() {
       footer={
         <>
           Noch kein Konto?{' '}
-          <Link className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/register">
+          <Link
+            className="font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/register"
+          >
             Jetzt registrieren
           </Link>
         </>
@@ -58,7 +61,10 @@ export default function LoginRoute() {
     >
       <form className="space-y-5" onSubmit={handleSubmit} noValidate>
         {location.state?.passwordReset ? (
-          <p className="rounded-xl border border-khaki-beige-300 bg-khaki-beige-100 px-4 py-3 text-sm text-khaki-beige-800" role="status">
+          <p
+            className="rounded-xl border border-khaki-beige-300 bg-khaki-beige-100 px-4 py-3 text-sm text-khaki-beige-800"
+            role="status"
+          >
             Dein Passwort wurde geändert. Du kannst dich jetzt anmelden.
           </p>
         ) : null}
@@ -84,13 +90,19 @@ export default function LoginRoute() {
         />
 
         <div className="-mt-2 text-right">
-          <Link className="text-sm font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900" to="/forgot-password">
+          <Link
+            className="text-sm font-semibold text-chocolate-plum-700 hover:text-chocolate-plum-900"
+            to="/forgot-password"
+          >
             Passwort vergessen?
           </Link>
         </div>
 
         {submitError ? (
-          <p className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800" role="alert">
+          <p
+            className="rounded-xl border border-chocolate-plum-200 bg-chocolate-plum-50 px-4 py-3 text-sm text-chocolate-plum-800"
+            role="alert"
+          >
             {submitError}
           </p>
         ) : null}
