@@ -162,3 +162,14 @@ export async function deactivateMedication(id: string) {
 
   if (error) throw error
 }
+
+export async function deleteAccount() {
+  const supabase = getBrowserClient()
+  const { error } = await supabase.functions.invoke('delete-account', {
+    body: {},
+  })
+
+  if (error) throw error
+
+  await supabase.auth.signOut({ scope: 'local' })
+}
