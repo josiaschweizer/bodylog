@@ -88,6 +88,23 @@
     -webkit-touch-callout: none;
   }
 
+  input[type='time'],
+  input[type='datetime-local'] {
+    display: block;
+    inline-size: 100%;
+    min-inline-size: 0;
+    max-inline-size: 100%;
+    overflow: hidden;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  input[type='time']::-webkit-date-and-time-value,
+  input[type='datetime-local']::-webkit-date-and-time-value {
+    min-inline-size: 0;
+    text-align: start;
+  }
+
   @media (max-width: 767px) {
     input,
     select,
