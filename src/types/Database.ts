@@ -382,6 +382,7 @@ export type Database = {
           birth_date: string | null
           created_at: string
           current_weight_kg: number | null
+          default_drink_amount_ml: number
           first_name: string | null
           gender: Database["public"]["Enums"]["gender_type"] | null
           height_cm: number | null
@@ -394,6 +395,7 @@ export type Database = {
           birth_date?: string | null
           created_at?: string
           current_weight_kg?: number | null
+          default_drink_amount_ml?: number
           first_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           height_cm?: number | null
@@ -406,6 +408,7 @@ export type Database = {
           birth_date?: string | null
           created_at?: string
           current_weight_kg?: number | null
+          default_drink_amount_ml?: number
           first_name?: string | null
           gender?: Database["public"]["Enums"]["gender_type"] | null
           height_cm?: number | null

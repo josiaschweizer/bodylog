@@ -73,7 +73,7 @@ export type DrinkDraft = {
 
 export const INITIAL_DRINK_DRAFT: DrinkDraft = {
   name: 'Wasser',
-  amountMl: '300',
+  amountMl: '500',
   caffeineMg: '',
   alcoholPercent: '',
 }

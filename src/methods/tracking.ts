@@ -10,6 +10,25 @@ import type {
   TrackingEntryType,
 } from '@/lib/tracking'
 
+export const DEFAULT_DRINK_SUGGESTIONS = [
+  'Wasser',
+  'Mineralwasser',
+  'Cola',
+  'Cola Zero',
+  'Eistee',
+  'Kaffee schwarz',
+  'Latte Macchiato',
+  'Cappuccino',
+  'Espresso',
+  'Tee',
+  'Orangensaft',
+  'Apfelsaft',
+  'Milch',
+  'Energy Drink',
+  'Bier',
+  'Wein',
+]
+
 export type TrackingEntryDetails =
   | {
       kind: 'FOOD'
@@ -458,8 +477,8 @@ export async function updateTrackingEntry(
 
 export async function getTrackingSuggestions() {
   const supabase = getBrowserClient()
-  const [drinksResult, symptomsResult, customSymptomsResult, medicationsResult] = await Promise.all(
-    [
+  const [drinksResult, symptomsResult, customSymptomsResult, medicationsResult, profileResult] =
+    await Promise.all([
       supabase.from('drink_entries').select('drink_name').limit(100),
       supabase.from('symptoms').select('id, name').eq('is_active', true).order('name'),
       supabase
@@ -474,8 +493,8 @@ export async function getTrackingSuggestions() {
         )
         .eq('is_active', true)
         .order('name'),
-    ],
-  )
+      supabase.from('profiles').select('default_drink_amount_ml').single(),
+    ])
 
   if (drinksResult.error) {
     throw drinksResult.error
@@ -489,16 +508,12 @@ export async function getTrackingSuggestions() {
   if (medicationsResult.error) {
     throw medicationsResult.error
   }
+  if (profileResult.error) {
+    throw profileResult.error
+  }
 
   const drinks = Array.from(
-    new Set([
-      'Wasser',
-      'Kaffee',
-      'Tee',
-      'Mineralwasser',
-      'Saft',
-      ...drinksResult.data.map((item) => item.drink_name),
-    ]),
+    new Set([...DEFAULT_DRINK_SUGGESTIONS, ...drinksResult.data.map((item) => item.drink_name)]),
   )
 
   const storedSymptomNames = new Set(
@@ -525,6 +540,7 @@ export async function getTrackingSuggestions() {
 
   return {
     drinks,
+    defaultDrinkAmountMl: profileResult.data.default_drink_amount_ml,
     symptoms: [...symptomsResult.data, ...customSymptoms] satisfies SymptomSuggestion[],
     medications: medicationsResult.data satisfies Medication[],
   }

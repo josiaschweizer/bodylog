@@ -3,12 +3,22 @@ import type { DrinkDraft } from '@/lib/tracking-form'
 type DrinkEntryFieldsProps = {
   value: DrinkDraft
   suggestions: string[]
+  defaultAmountMl: number
   onChange: (value: DrinkDraft) => void
 }
 
-export default function DrinkEntryFields({ value, suggestions, onChange }: DrinkEntryFieldsProps) {
+export default function DrinkEntryFields({
+  value,
+  suggestions,
+  defaultAmountMl,
+  onChange,
+}: DrinkEntryFieldsProps) {
   function update(changes: Partial<DrinkDraft>) {
     onChange({ ...value, ...changes })
+  }
+
+  function selectSuggestion(name: string) {
+    update({ name, amountMl: defaultAmountMl.toString() })
   }
 
   return (
@@ -32,6 +42,25 @@ export default function DrinkEntryFields({ value, suggestions, onChange }: Drink
           ))}
         </datalist>
       </label>
+      <div className="mt-3">
+        <p className="text-xs font-semibold text-dusty-taupe-600">Schnellauswahl</p>
+        <div className="scrollbar-hidden -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1">
+          {suggestions.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              onClick={() => selectSuggestion(suggestion)}
+              className={`shrink-0 rounded-full border px-3 py-2 text-sm font-semibold transition ${
+                value.name === suggestion
+                  ? 'border-chocolate-plum-700 bg-chocolate-plum-700 text-white'
+                  : 'border-dusty-taupe-200 bg-khaki-beige-50 text-ash-brown-800 active:bg-chocolate-plum-100'
+              }`}
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         {[
           { key: 'amountMl', label: 'Menge (ml)', placeholder: '300' },

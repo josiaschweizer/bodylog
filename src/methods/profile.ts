@@ -35,6 +35,41 @@ export type MedicationInput = {
   notes: string
 }
 
+export type ProfilePreferences = {
+  default_drink_amount_ml: number
+}
+
+export async function getProfilePreferences() {
+  const { data, error } = await getBrowserClient()
+    .from('profiles')
+    .select('default_drink_amount_ml')
+    .single()
+
+  if (error) {
+    throw error
+  }
+
+  return data satisfies ProfilePreferences
+}
+
+export async function updateProfilePreferences(defaultDrinkAmountMl: number) {
+  const supabase = getBrowserClient()
+  const { data: userData, error: userError } = await supabase.auth.getUser()
+
+  if (userError || !userData.user) {
+    throw userError ?? new Error('Not authenticated')
+  }
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ default_drink_amount_ml: defaultDrinkAmountMl })
+    .eq('id', userData.user.id)
+
+  if (error) {
+    throw error
+  }
+}
+
 export async function getMedications() {
   const { data, error } = await getBrowserClient()
     .from('medications')

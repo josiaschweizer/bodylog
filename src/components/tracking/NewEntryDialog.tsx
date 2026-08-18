@@ -40,6 +40,7 @@ import type {
 } from '@/lib/tracking-form'
 import {
   createTrackingEntry,
+  DEFAULT_DRINK_SUGGESTIONS,
   getTrackingSuggestions,
   updateTrackingEntry,
 } from '@/methods/tracking'
@@ -78,6 +79,7 @@ export default function NewEntryDialog({
   })
   const [urination, setUrination] = useState<UrinationDraft>({ ...INITIAL_URINATION_DRAFT })
   const [drinkSuggestions, setDrinkSuggestions] = useState<string[]>([])
+  const [defaultDrinkAmountMl, setDefaultDrinkAmountMl] = useState(500)
   const [symptomSuggestions, setSymptomSuggestions] = useState<SymptomSuggestion[]>([])
   const [medications, setMedications] = useState<Medication[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -205,11 +207,18 @@ export default function NewEntryDialog({
     void getTrackingSuggestions()
       .then((suggestions) => {
         setDrinkSuggestions(suggestions.drinks)
+        setDefaultDrinkAmountMl(suggestions.defaultDrinkAmountMl)
+        if (!entryToEdit) {
+          setDrink((current) => ({
+            ...current,
+            amountMl: suggestions.defaultDrinkAmountMl.toString(),
+          }))
+        }
         setSymptomSuggestions(suggestions.symptoms)
         setMedications(suggestions.medications)
       })
       .catch(() => {
-        setDrinkSuggestions(['Wasser', 'Kaffee', 'Tee', 'Mineralwasser', 'Saft'])
+        setDrinkSuggestions(DEFAULT_DRINK_SUGGESTIONS)
       })
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -549,7 +558,12 @@ export default function NewEntryDialog({
             {entryType === 'STOOL' ? <StoolEntryFields value={stool} onChange={setStool} /> : null}
 
             {entryType === 'DRINK' ? (
-              <DrinkEntryFields value={drink} suggestions={drinkSuggestions} onChange={setDrink} />
+              <DrinkEntryFields
+                value={drink}
+                suggestions={drinkSuggestions}
+                defaultAmountMl={defaultDrinkAmountMl}
+                onChange={setDrink}
+              />
             ) : null}
 
             {entryType === 'SLEEP' ? <SleepEntryFields value={sleep} onChange={setSleep} /> : null}

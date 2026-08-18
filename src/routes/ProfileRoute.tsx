@@ -4,6 +4,7 @@ import {
   AlertTriangle,
   CircleUserRound,
   Clock3,
+  GlassWater,
   LoaderCircle,
   LogOut,
   Pencil,
@@ -21,6 +22,8 @@ import {
   deactivateMedication,
   deleteAccount,
   getMedications,
+  getProfilePreferences,
+  updateProfilePreferences,
   updateMedication,
 } from '@/methods/profile'
 import type { MedicationWithSchedules } from '@/methods/profile'
@@ -45,6 +48,8 @@ export default function ProfileRoute() {
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [editingMedicationId, setEditingMedicationId] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isLoadingPreferences, setIsLoadingPreferences] = useState(true)
+  const [isSavingPreferences, setIsSavingPreferences] = useState(false)
   const [isSigningOut, setIsSigningOut] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeletingAccount, setIsDeletingAccount] = useState(false)
@@ -52,6 +57,9 @@ export default function ProfileRoute() {
   const [error, setError] = useState<string | null>(null)
   const [logoutError, setLogoutError] = useState<string | null>(null)
   const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [preferencesError, setPreferencesError] = useState<string | null>(null)
+  const [preferencesSuccess, setPreferencesSuccess] = useState(false)
+  const [defaultDrinkAmountMl, setDefaultDrinkAmountMl] = useState('500')
   const [name, setName] = useState('')
   const [activeIngredient, setActiveIngredient] = useState('')
   const [strength, setStrength] = useState('')
@@ -71,6 +79,19 @@ export default function ProfileRoute() {
   }
 
   useEffect(loadMedications, [])
+
+  useEffect(() => {
+    void getProfilePreferences()
+      .then((preferences) => {
+        setDefaultDrinkAmountMl(preferences.default_drink_amount_ml.toString())
+      })
+      .catch(() => {
+        setPreferencesError('Die Profileinstellungen konnten nicht geladen werden.')
+      })
+      .finally(() => {
+        setIsLoadingPreferences(false)
+      })
+  }, [])
 
   function resetForm() {
     setName('')
@@ -181,6 +202,30 @@ export default function ProfileRoute() {
     }
   }
 
+  async function handleSavePreferences(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const amount = Number(defaultDrinkAmountMl)
+
+    if (!Number.isInteger(amount) || amount < 1 || amount > 10000) {
+      setPreferencesError('Bitte gib eine Menge zwischen 1 und 10’000 ml ein.')
+      setPreferencesSuccess(false)
+      return
+    }
+
+    setIsSavingPreferences(true)
+    setPreferencesError(null)
+    setPreferencesSuccess(false)
+
+    try {
+      await updateProfilePreferences(amount)
+      setPreferencesSuccess(true)
+    } catch {
+      setPreferencesError('Die Profileinstellung konnte nicht gespeichert werden.')
+    } finally {
+      setIsSavingPreferences(false)
+    }
+  }
+
   async function handleDeleteAccount(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (deleteConfirmation !== 'LÖSCHEN') {
@@ -230,6 +275,72 @@ export default function ProfileRoute() {
           </p>
           <p className="text-sm text-dusty-taupe-600">{user?.email}</p>
         </div>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm sm:p-6">
+        <div className="flex items-start gap-4">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-chocolate-plum-100 text-chocolate-plum-700">
+            <GlassWater size={22} aria-hidden="true" />
+          </span>
+          <div>
+            <h2 className="text-lg font-bold text-chocolate-plum-950">Getränkeeinstellungen</h2>
+            <p className="mt-1 text-sm leading-6 text-dusty-taupe-600">
+              Diese Menge wird bei neuen Getränken automatisch vorgeschlagen.
+            </p>
+          </div>
+        </div>
+
+        <form className="mt-5" onSubmit={handleSavePreferences}>
+          <label className="block max-w-sm">
+            <span className="mb-2 block text-sm font-semibold text-ash-brown-900">
+              Standardmenge (ml)
+            </span>
+            <input
+              type="number"
+              min="1"
+              max="10000"
+              step="10"
+              required
+              value={defaultDrinkAmountMl}
+              onChange={(event) => {
+                setDefaultDrinkAmountMl(event.target.value)
+                setPreferencesSuccess(false)
+              }}
+              disabled={isLoadingPreferences || isSavingPreferences}
+              className={fieldClass}
+            />
+            <span className="mt-2 block text-xs text-dusty-taupe-600">
+              Beispiel: Eine 50-cl-Flasche entspricht 500 ml.
+            </span>
+          </label>
+
+          {preferencesError ? (
+            <p
+              className="mt-4 rounded-xl bg-chocolate-plum-100 px-4 py-3 text-sm text-chocolate-plum-800"
+              role="alert"
+            >
+              {preferencesError}
+            </p>
+          ) : null}
+          {preferencesSuccess ? (
+            <p className="mt-4 text-sm font-semibold text-chocolate-plum-700" role="status">
+              Standardmenge gespeichert.
+            </p>
+          ) : null}
+
+          <button
+            type="submit"
+            disabled={isLoadingPreferences || isSavingPreferences}
+            className="mt-5 flex min-h-12 items-center justify-center gap-2 rounded-xl bg-chocolate-plum-800 px-5 py-3 font-semibold text-white disabled:cursor-wait disabled:opacity-60"
+          >
+            {isSavingPreferences ? (
+              <LoaderCircle className="animate-spin" size={20} aria-hidden="true" />
+            ) : (
+              <GlassWater size={20} aria-hidden="true" />
+            )}
+            {isSavingPreferences ? 'Wird gespeichert …' : 'Standardmenge speichern'}
+          </button>
+        </form>
       </section>
 
       <section className="mt-6 rounded-2xl border border-dusty-taupe-200 bg-white p-5 shadow-sm sm:p-6">
