@@ -74,6 +74,19 @@
     min-height: 100dvh;
   }
 
+  fieldset {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
+  label,
+  input,
+  select,
+  textarea {
+    min-inline-size: 0;
+    max-inline-size: 100%;
+  }
+
   button,
   a,
   input,

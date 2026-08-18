@@ -22,11 +22,11 @@ export default function DrinkEntryFields({
   }
 
   return (
-    <fieldset className="rounded-2xl border border-dusty-taupe-200 bg-white p-4 sm:p-5">
+    <fieldset className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-dusty-taupe-200 bg-white p-4 sm:p-5">
       <legend className="px-2 text-sm font-bold text-chocolate-plum-800">
         Details zum Getränk
       </legend>
-      <label className="block">
+      <label className="block min-w-0 max-w-full">
         <span className="mb-2 block text-sm font-semibold text-ash-brown-800">Getränk</span>
         <input
           required
@@ -34,7 +34,7 @@ export default function DrinkEntryFields({
           value={value.name}
           onChange={(event) => update({ name: event.target.value })}
           placeholder="Auswählen oder selbst eingeben"
-          className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+          className="min-w-0 max-w-full w-full rounded-xl border border-dusty-taupe-300 bg-white px-4 py-3 outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
         />
         <datalist id="drink-suggestions">
           {suggestions.map((suggestion) => (
@@ -42,9 +42,9 @@ export default function DrinkEntryFields({
           ))}
         </datalist>
       </label>
-      <div className="mt-3">
+      <div className="mt-3 min-w-0 max-w-full">
         <p className="text-xs font-semibold text-dusty-taupe-600">Schnellauswahl</p>
-        <div className="scrollbar-hidden -mx-1 mt-2 flex gap-2 overflow-x-auto px-1 pb-1">
+        <div className="scrollbar-hidden mt-2 flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
           {suggestions.map((suggestion) => (
             <button
               key={suggestion}
@@ -61,13 +61,13 @@ export default function DrinkEntryFields({
           ))}
         </div>
       </div>
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <div className="mt-4 grid min-w-0 max-w-full gap-3 sm:grid-cols-3">
         {[
           { key: 'amountMl', label: 'Menge (ml)', placeholder: '300' },
           { key: 'caffeineMg', label: 'Koffein (mg)', placeholder: 'optional' },
           { key: 'alcoholPercent', label: 'Alkohol (%)', placeholder: 'optional' },
         ].map((field) => (
-          <label key={field.key}>
+          <label key={field.key} className="min-w-0 max-w-full">
             <span className="mb-2 block text-sm font-semibold text-ash-brown-800">
               {field.label}
             </span>
@@ -78,7 +78,7 @@ export default function DrinkEntryFields({
               value={value[field.key as keyof DrinkDraft]}
               onChange={(event) => update({ [field.key]: event.target.value })}
               placeholder={field.placeholder}
-              className="w-full rounded-xl border border-dusty-taupe-300 bg-white px-3 py-3 text-sm outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
+              className="min-w-0 max-w-full w-full rounded-xl border border-dusty-taupe-300 bg-white px-3 py-3 text-sm outline-none focus:border-chocolate-plum-500 focus:ring-4 focus:ring-chocolate-plum-100"
             />
           </label>
         ))}
