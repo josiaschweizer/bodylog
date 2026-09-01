@@ -59,15 +59,13 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
-    overscroll-behavior: none;
+    overflow-x: clip;
   }
 
   body {
     min-width: 320px;
     min-height: 100dvh;
-    overflow-x: hidden;
-    overscroll-behavior-y: none;
+    overflow-x: clip;
   }
 
   #root {
